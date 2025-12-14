@@ -3,30 +3,34 @@ package config
 import (
 	"flag"
 	"os"
+	"sync"
 
 	"gopkg.in/yaml.v3"
 )
 
 // fixme: NOT TESTED
 
-// Config global single ton value, access to parameters through GET methods
-var Config *Cfg
+// App global single ton value, access to parameters through GET methods
+var App *appConfig
+var once sync.Once
 
-// LoadConfig loads single ton value Config
-func LoadConfig(){
-	config := new(Cfg)
-	config.parseFlags()
-	config.loadENV()
+// GetConfig loads single ton value Config
+func GetConfig() {
+	once.Do(func() {
+		config := new(appConfig)
+		config.parseFlags()
+		config.loadENV()
 
-	if config.core.ConfigPath != "" {
-		Config = loadConfigFromFile(config.core.ConfigPath)
-	}
+		if config.core.ConfigPath != "" {
+			App = loadConfigFromFile(config.core.ConfigPath)
+		}
 
-	Config = config
+		App = config
+	})
 }
 
 // parseFlags loads flags
-func (cfg *Cfg) parseFlags() {
+func (cfg *appConfig) parseFlags() {
 	var (
 		serverAddrFlg = flag.String("a", "", "address to listen (e.g. 127.0.0.1:8080)")
 		connPathFlag  = flag.String("d", "", "database connection URL (postgres://...)")
@@ -52,7 +56,7 @@ func (cfg *Cfg) parseFlags() {
 }
 
 // loadENV loads virtual environment
-func (cfg *Cfg) loadENV() {
+func (cfg *appConfig) loadENV() {
 	if addr, ok := os.LookupEnv("ADDRESS"); ok {
 		cfg.server.addr = addr
 	}
@@ -70,7 +74,7 @@ func (cfg *Cfg) loadENV() {
 }
 
 // loadConfigFromFile loads data from config.yml file
-func loadConfigFromFile(configPath string) *Cfg {
+func loadConfigFromFile(configPath string) *appConfig {
 	file, err := os.Open(configPath)
 	if err != nil {
 		panic(err)
@@ -81,7 +85,7 @@ func loadConfigFromFile(configPath string) *Cfg {
 		}
 	}()
 
-	config := new(Cfg)
+	config := new(appConfig)
 
 	err = yaml.NewDecoder(file).Decode(&config)
 	if err != nil {
@@ -89,4 +93,3 @@ func loadConfigFromFile(configPath string) *Cfg {
 	}
 	return config
 }
-

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"cmd/cmd/server/config"
 	"database/sql"
 	"fmt"
 	"os"
@@ -12,15 +13,7 @@ import (
 	"github.com/simukti/sqldb-logger/logadapter/zerologadapter"
 )
 
-type Config interface {
-	GetDSN() string
-	GetMaxIdleConns() int
-	GetMaxOpenConns() int
-	GetConnMaxLifetime() time.Duration
-	GetDebugMode() bool
-}
-
-func NewConnection(cfg Config) (*sql.DB, error) {
+func NewConnection() (*sql.DB, error) {
 
 	var dsn string // TODO GetDSN function in config that crates DSN from config [DB] data
 
@@ -29,15 +22,15 @@ func NewConnection(cfg Config) (*sql.DB, error) {
 		// logger.Info("[Db] Failed to set connection with database") fixme
 		return nil, fmt.Errorf("[Db] failed to set connection with database: %v", err)
 	}
-	db.SetConnMaxLifetime(cfg.GetConnMaxLifetime() * time.Second)
-	db.SetMaxIdleConns(cfg.GetMaxIdleConns())
-	db.SetMaxOpenConns(cfg.GetMaxOpenConns())
+	db.SetConnMaxLifetime(config.App.GetConnMaxLifetime() * time.Second)
+	db.SetMaxIdleConns(config.App.GetMaxIdleConns())
+	db.SetMaxOpenConns(config.App.GetMaxOpenConns())
 
 	if err := db.Ping(); err != nil {
 		return nil, fmt.Errorf("[Db] database ping failed: %s", err)
 	}
 
-	if cfg.GetDebugMode() {
+	if config.App.GetDebugMode() {
 		db = debugModeConnection(dsn, db)
 	}
 

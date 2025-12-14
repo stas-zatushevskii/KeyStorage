@@ -1,6 +1,6 @@
 package config
 
-type Cfg struct {
+type appConfig struct {
 	core   core   `yaml:"Core"`
 	db     db     `yaml:"Db"`
 	logger logger `yaml:"Logger"`
