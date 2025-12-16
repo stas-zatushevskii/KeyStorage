@@ -12,7 +12,7 @@ import (
 func main() {
 	navigator := nav.New()
 
-	navigator.Push(mainPage.New())
+	navigator.Push(auth_page.New())
 
 	root := app.New(navigator, &app.UserState{})
 

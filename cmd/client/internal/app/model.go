@@ -16,12 +16,12 @@ type Model struct {
 	state *UserState
 }
 
-func (m Model) Init() tea.Cmd {
+func (m *Model) Init() tea.Cmd {
 	return nil
 }
 
-func New(nav *nav.Navigator, state *UserState) Model {
-	return Model{
+func New(nav *nav.Navigator, state *UserState) *Model {
+	return &Model{
 		nav:   nav,
 		state: state,
 	}

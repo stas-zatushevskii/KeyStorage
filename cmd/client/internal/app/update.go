@@ -6,7 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case nav.NextPage:
 		m.nav.Push(msg.Page)
@@ -18,5 +18,5 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	update, cmd := m.nav.Current().Update(msg)
 	m.nav.ReplaceCurrent(update)
 
-	return update, cmd
+	return m, cmd
 }

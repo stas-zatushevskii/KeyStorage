@@ -1,4 +1,4 @@
-package mainPage
+package auth_page
 
 import (
 	nav "client/internal/navigator"

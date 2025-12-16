@@ -1,0 +1,8 @@
+
+app:
+  debug_status: true
+
+auth:
+  inactive_max_time: 3
+  jwt_refresh_token_os_key: "KeyStorageRefreshToken"
+  jwt_token_os_key: "KeyStorageJWT"
