@@ -3,10 +3,12 @@ package config
 var App *Config
 
 type Config struct {
-	Auth
+	KeyRingNames KeyRingNames
 }
 
-type Auth struct {
+type KeyRingNames struct {
 	JWTRefreshToken string
 	JWTAccessToken  string
+	JWTExpiresAt    string
+	UserName        string
 }
