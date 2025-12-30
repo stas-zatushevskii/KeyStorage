@@ -75,5 +75,7 @@ _Central application coordinator_
 * processes navigation messages
 * delegates all other messages to the active page
 
+
+
 The root view always renders the current page provided by the navigator
 
