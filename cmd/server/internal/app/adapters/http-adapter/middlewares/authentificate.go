@@ -1,0 +1,35 @@
+package middlewares
+
+import (
+	"context"
+	"net/http"
+	"server/internal/app/adapters/http-adapter/constant"
+	"server/internal/app/adapters/http-adapter/errors/user"
+	jsonRW "server/internal/app/adapters/http-adapter/json"
+
+)
+
+type authService interface {
+	Authenticate(token string) (int64, error)
+}
+
+func JWTMiddleware(service authService) func(next http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			jwt := r.Header.Get("Authorization")
+			if jwt == "" {
+				http.Error(w, "JWT token not found", http.StatusUnauthorized)
+				return
+			}
+			userID, err := service.Authenticate(jwt)
+			if err != nil {
+				result := user.ProcessServiceErrors(err, "JWT token authentication")
+				jsonRW.WriteJSONResponse(w, result.HTTPStatus, result.ErrMsg)
+				return
+			}
+			ctx := context.WithValue(r.Context(), constant.UserIDKey, userID)
+
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}

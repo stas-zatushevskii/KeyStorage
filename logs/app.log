@@ -1,0 +1,103 @@
+{"level":"fatal","timestamp":"2025-12-23 17:26:47","msg":"[Db] failed to set connection with database: sql: unknown driver \"mysql\" (forgotten import?)"}
+{"level":"fatal","timestamp":"2025-12-23 17:31:14","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2025-12-23 17:31:39","msg":""}
+{"level":"fatal","timestamp":"2025-12-23 17:31:39","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2025-12-23 17:35:53","msg":""}
+{"level":"fatal","timestamp":"2025-12-23 17:35:53","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2025-12-23 17:36:07","msg":""}
+{"level":"fatal","timestamp":"2025-12-23 17:36:07","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2025-12-23 17:36:16","msg":""}
+{"level":"info","timestamp":"2025-12-23 17:36:48","msg":"HOUAIJKLFS"}
+{"level":"info","timestamp":"2025-12-23 17:42:57","msg":"host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2025-12-23 17:42:57","msg":"Running REST server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 17:51:50","msg":"[Db] database connection debug mode: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2025-12-23 17:51:50","msg":"Running REST server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 17:52:59","msg":"[Db] database connection debug mode: true"}
+{"level":"info","timestamp":"2025-12-23 17:52:59","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 17:54:25","msg":"[Db] database connection","debug":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 17:54:25","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 17:55:39","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 17:55:39","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 18:00:01","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:00:01","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 18:01:30","msg":"Handled HTTP request","uri":"/user/auth/register","method":"GET","status":405,"duration":0.000032875,"size":0}
+{"level":"info","timestamp":"2025-12-23 18:02:00","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":500,"duration":0.00075975,"size":75}
+{"level":"info","timestamp":"2025-12-23 18:10:07","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:10:07","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 18:10:10","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":500,"duration":0.000522458,"size":69}
+{"level":"info","timestamp":"2025-12-23 18:11:25","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:11:25","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"error","timestamp":"2025-12-23 18:11:26","msg":"RegisterNewUser"}
+{"level":"info","timestamp":"2025-12-23 18:11:26","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":500,"duration":0.183932791,"size":125}
+{"level":"info","timestamp":"2025-12-23 18:16:08","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:16:08","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"error","timestamp":"2025-12-23 18:16:10","msg":"RegisterNewUser"}
+{"level":"info","timestamp":"2025-12-23 18:16:10","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":500,"duration":0.169654667,"size":109}
+{"level":"info","timestamp":"2025-12-23 18:18:02","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:18:02","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"error","timestamp":"2025-12-23 18:18:04","msg":"RegisterNewUser"}
+{"level":"info","timestamp":"2025-12-23 18:18:04","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":500,"duration":0.17482475,"size":109}
+{"level":"info","timestamp":"2025-12-23 18:19:25","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:19:25","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"error","timestamp":"2025-12-23 18:19:27","msg":"RegisterNewUser"}
+{"level":"info","timestamp":"2025-12-23 18:19:27","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":500,"duration":0.184940583,"size":83}
+{"level":"info","timestamp":"2025-12-23 18:21:53","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:21:53","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"error","timestamp":"2025-12-23 18:21:55","msg":"RegisterNewUser"}
+{"level":"info","timestamp":"2025-12-23 18:21:55","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":500,"duration":0.163565292,"size":133}
+{"level":"info","timestamp":"2025-12-23 18:22:11","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":200,"duration":0.327052792,"size":456}
+{"level":"error","timestamp":"2025-12-23 18:31:17","msg":"GetJWTToken tokens authentication"}
+{"level":"info","timestamp":"2025-12-23 18:31:17","msg":"Handled HTTP request","uri":"/user/auth/login","method":"POST","status":500,"duration":0.002559166,"size":91}
+{"level":"info","timestamp":"2025-12-23 18:32:25","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:32:25","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 18:32:26","msg":"Handled HTTP request","uri":"/user/auth/login","method":"POST","status":400,"duration":0.000835083,"size":33}
+{"level":"error","timestamp":"2025-12-23 18:32:52","msg":"LoginHandler"}
+{"level":"info","timestamp":"2025-12-23 18:32:52","msg":"Handled HTTP request","uri":"/user/auth/login","method":"POST","status":500,"duration":0.035167333,"size":119}
+{"level":"info","timestamp":"2025-12-23 18:34:50","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:34:50","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"error","timestamp":"2025-12-23 18:34:52","msg":"LoginHandler"}
+{"level":"info","timestamp":"2025-12-23 18:34:52","msg":"Handled HTTP request","uri":"/user/auth/login","method":"POST","status":500,"duration":0.1579125,"size":30}
+{"level":"info","timestamp":"2025-12-23 18:39:02","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 18:39:02","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 18:39:04","msg":"Handled HTTP request","uri":"/user/auth/login","method":"POST","status":200,"duration":0.292993791,"size":480}
+{"level":"info","timestamp":"2025-12-23 20:22:21","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 20:22:21","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-23 20:31:06","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-23 20:31:06","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-28 01:03:05","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2025-12-28 01:03:05","msg":"[server] Running HTTP server","address":"127.0.0.1:8080"}
+{"level":"info","timestamp":"2025-12-28 01:07:24","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":200,"duration":0.361075458,"size":463}
+{"level":"info","timestamp":"2025-12-28 01:08:34","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":200,"duration":0.302236416,"size":443}
+{"level":"error","timestamp":"2025-12-28 01:08:57","msg":"RegisterNewUser"}
+{"level":"info","timestamp":"2025-12-28 01:08:57","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":500,"duration":0.160328041,"size":133}
+{"level":"info","timestamp":"2025-12-28 01:09:24","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":200,"duration":0.282373417,"size":424}
+{"level":"error","timestamp":"2025-12-28 01:13:02","msg":"RegisterNewUser"}
+{"level":"info","timestamp":"2025-12-28 01:13:02","msg":"Handled HTTP request","uri":"/user/auth/register","method":"POST","status":500,"duration":0.168892667,"size":133}
+{"level":"fatal","timestamp":"2026-01-04 22:43:09","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"fatal","timestamp":"2026-01-04 22:45:49","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"fatal","timestamp":"2026-01-04 22:46:03","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"fatal","timestamp":"2026-01-04 22:53:12","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-04 22:55:50","msg":"[Db] connecting to database: "}
+{"level":"fatal","timestamp":"2026-01-04 22:55:50","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-04 23:00:24","msg":"[Db] connecting to database: "}
+{"level":"fatal","timestamp":"2026-01-04 23:00:24","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-04 23:00:50","msg":"[Db] connecting to database: "}
+{"level":"fatal","timestamp":"2026-01-04 23:00:50","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-04 23:01:20","msg":"[Db] connecting to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-04 23:01:20","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-04 23:01:20","msg":"[server] Running HTTP server","address":"0.0.0.0:8080"}
+{"level":"info","timestamp":"2026-01-05 20:52:11","msg":"[Db] connected to database: "}
+{"level":"fatal","timestamp":"2026-01-05 20:52:11","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-05 21:25:01","msg":"[Db] connected to database: "}
+{"level":"fatal","timestamp":"2026-01-05 21:25:01","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-05 21:25:37","msg":"[Db] connected to database: "}
+{"level":"fatal","timestamp":"2026-01-05 21:25:37","msg":"[Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-05 21:26:03","msg":"[Db] connected to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-05 21:26:03","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-05 21:26:03","msg":"[server] Running HTTP server","address":"0.0.0.0:8080"}
+{"level":"info","timestamp":"2026-01-08 00:21:49","msg":"[Db] set connection to database: "}
+{"level":"error","timestamp":"2026-01-08 00:21:49","msg":"Failed create Application","error":"[Db] failed to connect to database: [Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-08 00:22:42","msg":"[Db] set connection to database: "}
+{"level":"error","timestamp":"2026-01-08 00:22:42","msg":"Failed create Application","error":"[Db] failed to connect to database: [Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-08 00:23:16","msg":"[Db] set connection to database: host=db user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"}
+{"level":"error","timestamp":"2026-01-08 00:23:16","msg":"Failed create Application","error":"[Db] failed to connect to database: [Db] database ping failed: failed to connect to `user=postgres database=postgres`: hostname resolving error: lookup db: no such host"}
