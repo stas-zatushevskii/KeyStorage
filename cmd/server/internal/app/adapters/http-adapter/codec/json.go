@@ -1,4 +1,4 @@
-package json
+package codec
 
 import (
 	"encoding/json"
@@ -31,6 +31,7 @@ func ReadBody(data *ValidateData) (response ValidateResponse) {
 			ErrCode: http.StatusInternalServerError,
 		}
 	}
+
 	// safe Body.Close()
 	defer func() {
 		if err := data.R.Body.Close(); err != nil {
