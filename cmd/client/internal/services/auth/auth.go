@@ -2,7 +2,7 @@ package auth
 
 import (
 	"bytes"
-	"client/config"
+	"client/internal/config"
 	"strconv"
 	"strings"
 	"time"

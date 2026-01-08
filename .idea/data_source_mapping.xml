@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/.idea/queries/Query.sql" value="c9f6d679-5b02-4144-9739-0e91ba0d0369" />
+    <file url="file://$PROJECT_DIR$/cmd/server/internal/app/repository/accout_obj/repo.go" value="c9f6d679-5b02-4144-9739-0e91ba0d0369" />
+  </component>
+</project>

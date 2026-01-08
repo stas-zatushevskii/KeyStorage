@@ -15,10 +15,20 @@ type service interface {
 	RefreshJWTToken(ctx context.Context, jwt, refreshToken string) (*token.Tokens, error)
 }
 
-func Routes(service service) *chi.Mux {
+type httpHandler struct {
+	service service
+}
+
+func newHandler(s service) *httpHandler {
+	return &httpHandler{
+		service: s,
+	}
+}
+
+func New(service service) *chi.Mux {
 	r := chi.NewRouter()
 
-	handler := NewHandler(service)
+	handler := newHandler(service)
 
 	r.Post("/auth/register", handler.RegistrationHandler())
 

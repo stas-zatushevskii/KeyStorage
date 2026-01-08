@@ -3,16 +3,19 @@ package main
 import (
 	"client/internal/app"
 	nav "client/internal/navigator"
-	"client/internal/pages/mainPage"
+	"client/internal/pages/auth"
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/go-resty/resty/v2"
 )
 
 func main() {
 	navigator := nav.New()
 
-	navigator.Push(auth_page.New())
+	client := resty.New()
+
+	navigator.Push(auth.NewPage(client))
 
 	root := app.New(navigator, &app.UserState{})
 

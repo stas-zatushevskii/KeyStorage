@@ -12,31 +12,37 @@ import (
 )
 
 type App struct {
-	HttpAdapter *http_adapter.HttpAdapter
+	HttpAdapter     *http_adapter.HttpAdapter
+	OSSignalAdapter *os_signal_adapter.OsSignalAdapter
 }
 
 func New() (*App, error) {
 
 	database, err := db.NewConnection()
 	if err != nil {
-		return nil, fmt.Errorf("[Db] failed to connect to database: %v", err)
+		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
-	if err := db.SetupDatabase(database); err != nil {
-		return nil, fmt.Errorf("[Db] failed to setup database: %v", err)
+	if err = db.SetupDatabase(database); err != nil {
+		return nil, fmt.Errorf("failed to setup database: %v", err)
 	}
 
+	// os signals
+	osSignalAdapter := os_signal_adapter.New()
+
 	// http
-	httpAdapter := http_adapter.New(&http_adapter.Svc{UserUseCase: userUsecase.New(userReporitory.New(database))})
+	httpAdapter := http_adapter.New(&http_adapter.Srv{UserUseCase: userUsecase.New(userReporitory.New(database))})
+
 	// todo add grpc
 
 	return &App{
-		HttpAdapter: httpAdapter,
+		HttpAdapter:     httpAdapter,
+		OSSignalAdapter: osSignalAdapter,
 	}, nil
 }
 
 func (a App) Start() error {
 	gr := graceful.New(
-		graceful.NewProcess(os_signal_adapter.New()),
+		graceful.NewProcess(a.OSSignalAdapter),
 		graceful.NewProcess(a.HttpAdapter),
 	)
 

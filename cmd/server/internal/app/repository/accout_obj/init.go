@@ -1,4 +1,4 @@
-package user
+package account_obj
 
 import "database/sql"
 

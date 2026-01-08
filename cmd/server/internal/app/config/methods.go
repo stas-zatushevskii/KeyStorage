@@ -29,7 +29,6 @@ func (cfg *AppConfig) GetShutDownTimeout() time.Duration {
 	return cfg.Core.ShutdownTimeout
 }
 
-
 // ---- SERVER ----
 
 func (cfg *AppConfig) GetServerAddr() string {
@@ -86,4 +85,10 @@ func (cfg *AppConfig) GetMinioRootPassword() string {
 
 func (cfg *AppConfig) GetMinioUseSSL() bool {
 	return cfg.Minio.MinioUseSSL
+}
+
+// ---- Encryption ----
+
+func (cfg *AppConfig) GetAccountObjEncryptionKey() string {
+	return cfg.Encryption.AccountObjKey
 }

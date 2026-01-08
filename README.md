@@ -75,7 +75,41 @@ _Central application coordinator_
 * processes navigation messages
 * delegates all other messages to the active page
 
-
-
 The root view always renders the current page provided by the navigator
+
+
+minio-gin-crud/
+├── cmd/
+│ └── main.go
+├── internal/
+│ ├── common/
+│ │ ├── config/
+│ │ │ └── config.go
+│ │ ├── dto/
+│ │ │ └── minio.go
+│ │ └── errors/
+│ │ └── errors.go
+│ │ └── responses/
+│ │ └── responses.go
+│ ├── handler/
+│ │ ├── minio/
+│ │ │ ├── handler.go
+│ │ │ └── minio.go
+│ │ └── handler.go
+│ ├── service/
+│ │ ├── minio/
+│ │ │ ├── minio.go
+│ │ │ └── service.go
+│ │ └── service.go
+├── pkg/
+│ └── helpers/
+│ │ └── create-response.go
+│ │ └── file-data.type.go
+│ │ └── operation.error.go
+│ └── minio_client.go
+│ └── minio_service.go
+├── .env
+├── README.md
+├── docker-compose.yml
+└── go.mod
 

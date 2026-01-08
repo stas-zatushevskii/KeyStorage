@@ -3,17 +3,22 @@ package config
 import "time"
 
 type AppConfig struct {
-	Core   Core   `yaml:"core"`
-	DB     DB     `yaml:"db"`
-	Logger Logger `yaml:"logger"`
-	Server Server `yaml:"server"`
-	JWT    JWT    `yaml:"jwt"`
-	Minio  Minio  `yaml:"minio"`
+	Core       Core       `yaml:"core"`
+	DB         DB         `yaml:"db"`
+	Logger     Logger     `yaml:"logger"`
+	Server     Server     `yaml:"server"`
+	JWT        JWT        `yaml:"jwt"`
+	Minio      Minio      `yaml:"minio"`
+	Encryption Encryption `yaml:"encryption"`
+}
+
+type Encryption struct {
+	AccountObjKey string `yaml:"account_obj_key"`
 }
 
 type Core struct {
-	DebugMode  bool   `yaml:"debug_mode"`
-	ConfigPath string `yaml:"config_path"`
+	DebugMode       bool          `yaml:"debug_mode"`
+	ConfigPath      string        `yaml:"config_path"`
 	ShutdownTimeout time.Duration `yaml:"shutdown_timeout"`
 }
 

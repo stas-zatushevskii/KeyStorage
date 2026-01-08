@@ -3,10 +3,9 @@ package middlewares
 import (
 	"context"
 	"net/http"
-	"server/internal/app/adapters/http-adapter/constant"
-	"server/internal/app/adapters/http-adapter/errors/user"
-	jsonRW "server/internal/app/adapters/http-adapter/json"
-
+	"server/internal/app/adapters/http-adapter/codec"
+	"server/internal/app/adapters/http-adapter/constants"
+	errorMapper "server/internal/app/adapters/http-adapter/errors/user-usecase"
 )
 
 type authService interface {
@@ -23,11 +22,11 @@ func JWTMiddleware(service authService) func(next http.Handler) http.Handler {
 			}
 			userID, err := service.Authenticate(jwt)
 			if err != nil {
-				result := user.ProcessServiceErrors(err, "JWT token authentication")
-				jsonRW.WriteJSONResponse(w, result.HTTPStatus, result.ErrMsg)
+				status, message := errorMapper.Process(err)
+				codec.WriteJSON(w, status, message)
 				return
 			}
-			ctx := context.WithValue(r.Context(), constant.UserIDKey, userID)
+			ctx := context.WithValue(r.Context(), constants.UserIDKey, userID)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})

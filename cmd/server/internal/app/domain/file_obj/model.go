@@ -1,4 +1,4 @@
-package file
+package file_obj
 
 type File struct {
 	FileName string

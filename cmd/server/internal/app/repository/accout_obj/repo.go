@@ -1,112 +1,77 @@
-package user
+package account_obj
 
 import (
 	"context"
 	"database/sql"
 	"errors"
-	"server/internal/app/domain/user"
-	"server/internal/pkg/token"
-
-	"github.com/jackc/pgconn"
+	domain "server/internal/app/domain/account_obj"
 )
 
-func (u *Repository) GetById(ctx context.Context, id int64) (*user.User, error) {
+func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.Account, error) {
 	query := `
-		SELECT id, username, password_hash
-		FROM users
+		SELECT id, service_name, username, user_id, password
+		FROM account_data
+		WHERE user_id = $1`
+
+	var accounts []*domain.Account
+
+	rows, err := u.db.QueryContext(ctx, query, userId)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		obj := new(Account)
+
+		if err := rows.Scan(&obj.ID, &obj.ServiceName, &obj.UserName, &obj.UserId, &obj.Password); err != nil {
+			return nil, err
+		}
+
+		if obj.UserId.Valid && obj.ID.Valid {
+			accounts = append(accounts, obj.ToDomain())
+		}
+	}
+	return accounts, nil
+}
+
+func (u *Repository) GetByID(ctx context.Context, accountId int64) (*domain.Account, error) {
+	query := `
+		SELECT id, service_name, username, user_id, password
+		FROM account_data
 		WHERE id = $1`
 
-	newUser := user.NewUser()
-	if err := u.db.QueryRowContext(ctx, query, id).Scan(&newUser.ID, &newUser.Password); err != nil {
+	obj := new(Account)
+
+	if err := u.db.QueryRowContext(ctx, query, accountId).Scan(&obj.ID, &obj.ServiceName, &obj.UserName, &obj.UserId, &obj.Password); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, user.ErrUserNotFound
+			return nil, domain.ErrAccountInformationNotFound
 		}
 		return nil, err
 	}
-	return newUser, nil
+
+	return obj.ToDomain(), nil
 }
 
-func (u *Repository) GetByUsername(ctx context.Context, username string) (*user.User, error) {
+func (u *Repository) Create(ctx context.Context, account *domain.Account) (int64, error) {
 	query := `
-		SELECT id, username, password_hash
-		FROM users
-		WHERE username = $1`
-
-	newUser := user.NewUser()
-	if err := u.db.QueryRowContext(ctx, query, username).Scan(&newUser.ID, &newUser.Username, &newUser.Password); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, user.ErrUserNotFound
-		}
-		return nil, err
-	}
-	return newUser, nil
-}
-
-func (u *Repository) CreateNewUser(ctx context.Context, newUser *user.User) (int64, error) {
-	query := `
-		INSERT INTO users (username, password_hash)
-		VALUES ($1, $2)
+		INSERT INTO account_data (user_id, service_name, username, user_id, password)
+		VALUES ($1, $2, $3, $4)
 		RETURNING id`
 
-	var id int64
-	err := u.db.QueryRowContext(ctx, query, newUser.Username, newUser.Password).Scan(&id)
-	if err != nil {
+	if _, err := u.db.ExecContext(ctx, query, account.UserId, account.ServiceName, account.UserName, account.UserId, account.Password); err != nil {
 		return 0, err
 	}
-
-	var pgErr *pgconn.PgError
-	if errors.As(err, &pgErr) {
-		if pgErr.Code == "23505" { // unique_violation
-			return 0, user.ErrUsernameAlreadyExists
-		}
-	}
-	return id, nil
+	return account.AccountId, nil
 }
 
-func (u *Repository) AddTokens(ctx context.Context, userId int64, token *token.Tokens) error {
+func (u *Repository) Update(ctx context.Context, account *domain.Account) error {
 	query := `
-		INSERT INTO user_tokens (user_id, refresh_token_hash, refresh_token_expires_at, revoked_at)
-		VALUES ($1, $2, $3, $4)`
-	_, err := u.db.ExecContext(ctx, query, userId, token.RefreshToken, token.RefreshTokenExpAt, nil)
-	if err != nil {
+		UPDATE account_data SET
+		service_name = $1, username = $2, password = $3
+		WHERE id = $4`
+
+	if _, err := u.db.ExecContext(ctx, query, account.ServiceName, account.UserName, account.Password, account.AccountId); err != nil {
 		return err
 	}
 	return nil
-}
-
-func (u *Repository) UpdateTokens(ctx context.Context, userId int64, token *token.Tokens) error {
-	query := `
-		UPDATE user_tokens
-		SET 
-			refresh_token_hash = $2,
-			refresh_token_expires_at = $3,
-			revoked_at = $4
-		WHERE user_id = $1`
-	_, err := u.db.ExecContext(ctx, query, userId, token.RefreshToken, token.RefreshTokenExpAt, nil)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (u *Repository) GetTokens(ctx context.Context, userId int64) (*token.Tokens, error) {
-	query := `
-		SELECT refresh_token_hash, refresh_token_expires_at, revoked_at
-		FROM user_tokens
-		WHERE user_id = $1`
-
-	var revokedAt sql.NullInt64
-	newToken := token.NewTokens(userId)
-
-	err := u.db.QueryRowContext(ctx, query, userId).Scan(&newToken.RefreshToken, &newToken.RefreshTokenExpAt, &revokedAt)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, user.ErrRefreshTokenNotFound
-		}
-		return nil, err
-	}
-	if revokedAt.Valid {
-		newToken.Revoked = true
-	}
-	return newToken, err
 }

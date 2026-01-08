@@ -28,5 +28,8 @@ jwt:
     lifetime: 720h   # 30 days
     length: 64
 
+encryption:
+  account_obj_key: "YOYOYOYO"
+
 logger:
   level: "debug"
