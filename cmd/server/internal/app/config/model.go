@@ -13,7 +13,8 @@ type AppConfig struct {
 }
 
 type Encryption struct {
-	AccountObjKey string `yaml:"account_obj_key"`
+	AccountObjKey  string `yaml:"account_obj_key"`
+	BankCardObjKey string `yaml:"bank_card_obj_key"`
 }
 
 type Core struct {

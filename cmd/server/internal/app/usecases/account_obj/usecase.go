@@ -3,9 +3,7 @@ package account_obj
 import (
 	"context"
 	"fmt"
-	"server/internal/app/config"
 	domain "server/internal/app/domain/account_obj"
-	"server/internal/pkg/encryption/aes"
 )
 
 type Repository interface {
@@ -52,13 +50,6 @@ func (a *AccountObj) CreateNewAccountObj(ctx context.Context, account *domain.Ac
 		return 0, fmt.Errorf("service name is zero")
 	}
 
-	encryptedPassword, err := aes.EncryptAES([]byte(account.Password), []byte(config.App.Encryption.AccountObjKey))
-	if err != nil {
-		return 0, fmt.Errorf("failed to encrypt password: %w", err)
-	}
-
-	account.Password = string(encryptedPassword)
-
 	id, err := a.repo.Create(ctx, account)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create account: %w", err)
@@ -77,14 +68,7 @@ func (a *AccountObj) UpdateAccount(ctx context.Context, account *domain.Account)
 		return fmt.Errorf("service name cant be empty")
 	}
 
-	encryptedPassword, err := aes.EncryptAES([]byte(account.Password), []byte(config.App.Encryption.AccountObjKey))
-	if err != nil {
-		return fmt.Errorf("failed to encrypt password: %w", err)
-	}
-
-	account.Password = string(encryptedPassword)
-
-	err = a.repo.Update(ctx, account)
+	err := a.repo.Update(ctx, account)
 	if err != nil {
 		return fmt.Errorf("failed to update account: %w", err)
 	}

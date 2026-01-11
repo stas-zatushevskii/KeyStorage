@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
 	"server/internal/app/adapters/http-adapter/constants"
-	errorMapper "server/internal/app/adapters/http-adapter/errors/account-usecase"
+	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/account_usecase"
 	"server/internal/pkg/logger"
 
 	"go.uber.org/zap"

@@ -4,7 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"server/internal/app/config"
 	domain "server/internal/app/domain/account_obj"
+	"server/internal/pkg/encryption/aes"
 )
 
 func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.Account, error) {
@@ -27,9 +30,15 @@ func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.A
 			return nil, err
 		}
 
-		if obj.UserId.Valid && obj.ID.Valid {
-			accounts = append(accounts, obj.ToDomain())
+		if obj.Password.Valid {
+			decrypted, err := aes.DecryptAES([]byte(obj.Password.String), []byte(config.App.GetAccountObjEncryptionKey()))
+			if err != nil {
+				return nil, fmt.Errorf("failed decrypt account data: %w", err)
+			}
+			obj.Password.String = string(decrypted)
 		}
+
+		accounts = append(accounts, obj.ToDomain())
 	}
 	return accounts, nil
 }
@@ -49,19 +58,48 @@ func (u *Repository) GetByID(ctx context.Context, accountId int64) (*domain.Acco
 		return nil, err
 	}
 
+	if obj.Password.Valid {
+		decrypted, err := aes.DecryptAES([]byte(obj.Password.String), []byte(config.App.GetAccountObjEncryptionKey()))
+		if err != nil {
+			return nil, fmt.Errorf("failed decrypt account data: %w", err)
+		}
+		obj.Password.String = string(decrypted)
+	}
+
 	return obj.ToDomain(), nil
 }
 
 func (u *Repository) Create(ctx context.Context, account *domain.Account) (int64, error) {
 	query := `
-		INSERT INTO account_data (user_id, service_name, username, user_id, password)
+		INSERT INTO account_data (user_id, service_name, username, password)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id`
 
-	if _, err := u.db.ExecContext(ctx, query, account.UserId, account.ServiceName, account.UserName, account.UserId, account.Password); err != nil {
+	encryptedPassword, err := aes.EncryptAES([]byte(account.Password), []byte(config.App.GetAccountObjEncryptionKey()))
+	if err != nil {
+		return 0, fmt.Errorf("failed to encrypt password: %w", err)
+	}
+
+	account.Password = string(encryptedPassword)
+
+	if _, err := u.db.ExecContext(ctx, query, account.UserId, account.ServiceName, account.UserName, account.Password); err != nil {
 		return 0, err
 	}
-	return account.AccountId, nil
+
+	var id sql.NullInt64
+
+	if err := u.db.QueryRowContext(ctx, query).Scan(&id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, domain.ErrFaildeCreateAccountObject
+		}
+		return 0, err
+	}
+
+	if !id.Valid {
+		return 0, domain.ErrFaildeCreateAccountObject
+	}
+
+	return id.Int64, nil
 }
 
 func (u *Repository) Update(ctx context.Context, account *domain.Account) error {
@@ -69,6 +107,13 @@ func (u *Repository) Update(ctx context.Context, account *domain.Account) error 
 		UPDATE account_data SET
 		service_name = $1, username = $2, password = $3
 		WHERE id = $4`
+
+	encryptedPassword, err := aes.EncryptAES([]byte(account.Password), []byte(config.App.GetAccountObjEncryptionKey()))
+	if err != nil {
+		return fmt.Errorf("failed to encrypt password: %w", err)
+	}
+
+	account.Password = string(encryptedPassword)
 
 	if _, err := u.db.ExecContext(ctx, query, account.ServiceName, account.UserName, account.Password, account.AccountId); err != nil {
 		return err

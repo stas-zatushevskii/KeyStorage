@@ -4,29 +4,30 @@ import (
 	"encoding/json"
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
-	errorMapper "server/internal/app/adapters/http-adapter/errors/user-usecase"
+	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/user-usecase"
 	"server/internal/pkg/logger"
 
 	"go.uber.org/zap"
 )
 
-type RefreshTokenRequest struct {
+type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type RefreshTokenResponse struct {
+type LoginResponse struct {
 	Token        string `json:"token"`
 	RefreshToken string `json:"refresh_token"`
+	Error        string `json:"error"`
 }
 
-func (h *httpHandler) RefreshTokenHandler() http.HandlerFunc {
+func (h *httpHandler) LoginHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "RefreshTokenHandler"
+		const HandlerName = "LoginHandler"
 
 		var (
-			req  = new(RefreshTokenRequest)
-			resp = new(RefreshTokenResponse)
+			req  = new(LoginRequest)
+			resp = new(LoginResponse)
 		)
 
 		err := json.NewDecoder(r.Body).Decode(&req)
@@ -35,7 +36,7 @@ func (h *httpHandler) RefreshTokenHandler() http.HandlerFunc {
 			return
 		}
 
-		tokens, err := h.service.RefreshJWTToken(r.Context(), req.Username, req.Password)
+		tokens, err := h.service.Login(r.Context(), req.Username, req.Password)
 		if err != nil {
 			logger.Log.Error(HandlerName, zap.Error(err))
 

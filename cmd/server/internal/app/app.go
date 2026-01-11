@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"server/internal/app/adapters/http-adapter"
 	os_signal_adapter "server/internal/app/adapters/os-signal-adapter"
+	accountRepository "server/internal/app/repository/accout_obj"
 	userReporitory "server/internal/app/repository/user"
+	accountUsecase "server/internal/app/usecases/account_obj"
 	userUsecase "server/internal/app/usecases/user"
 	"server/internal/pkg/graceful"
 	db "server/internal/pkg/postgres"
@@ -30,7 +32,10 @@ func New() (*App, error) {
 	osSignalAdapter := os_signal_adapter.New()
 
 	// http
-	httpAdapter := http_adapter.New(&http_adapter.Srv{UserUseCase: userUsecase.New(userReporitory.New(database))})
+	httpAdapter := http_adapter.New(&http_adapter.Srv{
+		UserUseCase:       userUsecase.New(userReporitory.New(database)),
+		AccountObjUseCase: accountUsecase.New(accountRepository.New(database)),
+	})
 
 	// todo add grpc
 

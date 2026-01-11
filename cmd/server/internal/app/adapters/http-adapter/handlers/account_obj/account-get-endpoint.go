@@ -3,7 +3,7 @@ package account_obj
 import (
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
-	errorMapper "server/internal/app/adapters/http-adapter/errors/account-usecase"
+	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/account_usecase"
 	"server/internal/pkg/logger"
 	"strconv"
 
@@ -19,7 +19,7 @@ type AccountResponse struct {
 
 func (h *httpHandler) GetAccountObj() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "GetAccountList"
+		const HandlerName = "GetAccount"
 
 		urlId := chi.URLParam(r, "id")
 
@@ -29,7 +29,7 @@ func (h *httpHandler) GetAccountObj() http.HandlerFunc {
 			return
 		}
 
-		list, err := h.service.GetAccount(r.Context(), id)
+		account, err := h.service.GetAccount(r.Context(), id)
 		if err != nil {
 			logger.Log.Error(HandlerName, zap.Error(err))
 
@@ -38,6 +38,6 @@ func (h *httpHandler) GetAccountObj() http.HandlerFunc {
 			return
 		}
 
-		codec.WriteJSON(w, http.StatusOK, list)
+		codec.WriteJSON(w, http.StatusOK, account)
 	}
 }

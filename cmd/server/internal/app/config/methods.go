@@ -92,3 +92,6 @@ func (cfg *AppConfig) GetMinioUseSSL() bool {
 func (cfg *AppConfig) GetAccountObjEncryptionKey() string {
 	return cfg.Encryption.AccountObjKey
 }
+func (cfg *AppConfig) GetBankCardObjEncryptionKey() string {
+	return cfg.Encryption.BankCardObjKey
+}

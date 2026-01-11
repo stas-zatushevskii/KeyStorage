@@ -1,11 +1,11 @@
-package account_obj
+package bank_card_obj
 
 import (
 	"encoding/json"
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
-	errorMapper "server/internal/app/adapters/http-adapter/errors/account-usecase"
-	domain "server/internal/app/domain/account_obj"
+	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/bank_card_usecase"
+	domain "server/internal/app/domain/bank_card_obj"
 	"server/internal/pkg/logger"
 	"strconv"
 
@@ -13,18 +13,17 @@ import (
 	"go.uber.org/zap"
 )
 
-type UpdateAccountRequest struct {
-	ServiceName string `json:"service_name"`
-	UserName    string `json:"user_name"`
-	Password    string `json:"password"`
+type UpdateBankCardRequest struct {
+	Pid      string `json:"pid"`
+	BankName string `json:"bank_name"`
 }
 
 func (h *httpHandler) UpdateAccountObj() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "UpdateAccountObj"
+		const HandlerName = "UpdateBankCardObj"
 
 		var (
-			req = new(UpdateAccountRequest)
+			req = new(UpdateBankCardRequest)
 		)
 
 		err := json.NewDecoder(r.Body).Decode(&req)
@@ -57,10 +56,9 @@ func (h *httpHandler) UpdateAccountObj() http.HandlerFunc {
 	}
 }
 
-func (u *UpdateAccountRequest) toDomain() *domain.Account {
-	return &domain.Account{
-		ServiceName: u.ServiceName,
-		UserName:    u.UserName,
-		Password:    u.Password,
+func (u *UpdateBankCardRequest) toDomain() *domain.BankCard {
+	return &domain.BankCard{
+		Pid:  u.Pid,
+		Bank: u.BankName,
 	}
 }

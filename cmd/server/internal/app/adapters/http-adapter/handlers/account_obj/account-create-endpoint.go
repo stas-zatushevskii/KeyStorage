@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
-	errorMapper "server/internal/app/adapters/http-adapter/errors/account-usecase"
+	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/account_usecase"
 	domain "server/internal/app/domain/account_obj"
 	"server/internal/pkg/logger"
 
