@@ -18,7 +18,7 @@ type UpdateBankCardRequest struct {
 	BankName string `json:"bank_name"`
 }
 
-func (h *httpHandler) UpdateAccountObj() http.HandlerFunc {
+func (h *httpHandler) UpdateBankCardObj() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const HandlerName = "UpdateBankCardObj"
 
@@ -41,9 +41,9 @@ func (h *httpHandler) UpdateAccountObj() http.HandlerFunc {
 		}
 
 		account := req.toDomain()
-		account.AccountId = id
+		account.UserId = id
 
-		err = h.service.UpdateAccount(r.Context(), account)
+		err = h.service.UpdateBankCard(r.Context(), account)
 		if err != nil {
 			logger.Log.Error(HandlerName, zap.Error(err))
 

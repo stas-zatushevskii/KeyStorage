@@ -42,7 +42,7 @@ func (h *httpHandler) UpdateAccountObj() http.HandlerFunc {
 		}
 
 		account := req.toDomain()
-		account.AccountId = id
+		account.UserId = id
 
 		err = h.service.UpdateAccount(r.Context(), account)
 		if err != nil {
