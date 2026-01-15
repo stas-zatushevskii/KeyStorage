@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
 	"server/internal/app/adapters/http-adapter/constants"
-	errorMapper "server/internal/app/adapters/http-adapter/errors/user-usecase"
+	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/user_usecase"
 )
 
 type authService interface {

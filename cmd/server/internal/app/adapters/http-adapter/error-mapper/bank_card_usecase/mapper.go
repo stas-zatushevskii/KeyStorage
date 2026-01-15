@@ -1,4 +1,4 @@
-package user
+package bank_card_usecase
 
 import (
 	"errors"

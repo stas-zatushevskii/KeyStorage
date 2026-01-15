@@ -7,9 +7,11 @@ import (
 	os_signal_adapter "server/internal/app/adapters/os-signal-adapter"
 	accountRepository "server/internal/app/repository/accout_obj"
 	bankCardRepository "server/internal/app/repository/bank_card_obj"
+	textRepository "server/internal/app/repository/text_obj"
 	userReporitory "server/internal/app/repository/user"
 	accountUsecase "server/internal/app/usecases/account_obj"
 	bankCardUsecase "server/internal/app/usecases/bank_card_obj"
+	textUsecase "server/internal/app/usecases/text_obj"
 	userUsecase "server/internal/app/usecases/user"
 	"server/internal/pkg/graceful"
 	db "server/internal/pkg/postgres"
@@ -38,6 +40,7 @@ func New() (*App, error) {
 		UserUseCase:        userUsecase.New(userReporitory.New(database)),
 		AccountObjUseCase:  accountUsecase.New(accountRepository.New(database)),
 		BankCardObjUseCase: bankCardUsecase.New(bankCardRepository.New(database)),
+		TextObjUseCase:     textUsecase.New(textRepository.New(database)),
 	})
 
 	// todo add grpc

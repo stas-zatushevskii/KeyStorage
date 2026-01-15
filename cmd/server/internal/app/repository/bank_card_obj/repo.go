@@ -30,12 +30,12 @@ func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.B
 			return nil, err
 		}
 
-		if obj.PID.Valid {
-			decrypted, err := aes.DecryptAES([]byte(obj.PID.String), []byte(config.App.GetBankCardObjEncryptionKey()))
+		if len(obj.PID) > 0 {
+			decrypted, err := aes.DecryptAES(obj.PID, []byte(config.App.GetBankCardObjEncryptionKey()))
 			if err != nil {
 				return nil, fmt.Errorf("failed decrypt bank card: %w", err)
 			}
-			obj.PID.String = string(decrypted)
+			obj.PID = decrypted
 		}
 
 		cards = append(cards, obj.ToDomain())
@@ -55,14 +55,13 @@ func (u *Repository) GetByID(ctx context.Context, cardId int64) (*domain.BankCar
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrBankCardInformationNotFound
 		}
-
-		decrypted, err := aes.DecryptAES([]byte(obj.PID.String), []byte(config.App.GetBankCardObjEncryptionKey()))
-		if err != nil {
-			return nil, fmt.Errorf("failed decrypt bank card: %w", err)
-		}
-		obj.PID.String = string(decrypted)
-		return nil, err
 	}
+
+	decrypted, err := aes.DecryptAES(obj.PID, []byte(config.App.GetBankCardObjEncryptionKey()))
+	if err != nil {
+		return nil, fmt.Errorf("failed decrypt bank card: %w", err)
+	}
+	obj.PID = decrypted
 
 	return obj.ToDomain(), nil
 }
@@ -70,23 +69,17 @@ func (u *Repository) GetByID(ctx context.Context, cardId int64) (*domain.BankCar
 func (u *Repository) Create(ctx context.Context, card *domain.BankCard) (int64, error) {
 	query := `
 		INSERT INTO bank_data (user_id, bank_name, pid)
-		VALUES ($1, $2, $3, $4)
+		VALUES ($1, $2, $3)
 		RETURNING id`
 
-	encryptedPassword, err := aes.EncryptAES([]byte(card.Pid), []byte(config.App.GetBankCardObjEncryptionKey()))
+	encryptedPid, err := aes.EncryptAES([]byte(card.Pid), []byte(config.App.GetBankCardObjEncryptionKey()))
 	if err != nil {
 		return 0, fmt.Errorf("failed to encrypt PID: %w", err)
 	}
 
-	card.Pid = string(encryptedPassword)
-
-	if _, err := u.db.ExecContext(ctx, query, card.UserId, card.Bank, card.Pid); err != nil {
-		return 0, err
-	}
-
 	var id sql.NullInt64
 
-	if err := u.db.QueryRowContext(ctx, query).Scan(&id); err != nil {
+	if err := u.db.QueryRowContext(ctx, query, card.UserId, card.Bank, encryptedPid).Scan(&id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, domain.ErrFaildeCreateBankCardObject
 		}
@@ -106,14 +99,12 @@ func (u *Repository) Update(ctx context.Context, card *domain.BankCard) error {
 		bank_name = $1, pid = $2
 		WHERE id = $3`
 
-	encryptedPassword, err := aes.EncryptAES([]byte(card.Bank), []byte(config.App.GetBankCardObjEncryptionKey()))
+	encryptedPassword, err := aes.EncryptAES([]byte(card.Pid), []byte(config.App.GetBankCardObjEncryptionKey()))
 	if err != nil {
 		return fmt.Errorf("failed to encrypt PID: %w", err)
 	}
 
-	card.Pid = string(encryptedPassword)
-
-	if _, err := u.db.ExecContext(ctx, query, card.Bank, card.Pid, card.Pid, card.CardId); err != nil {
+	if _, err := u.db.ExecContext(ctx, query, card.Bank, encryptedPassword, card.CardId); err != nil {
 		return err
 	}
 	return nil

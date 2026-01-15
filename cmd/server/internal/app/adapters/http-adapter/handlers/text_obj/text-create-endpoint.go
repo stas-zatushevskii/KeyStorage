@@ -1,0 +1,65 @@
+package text_obj
+
+import (
+	"encoding/json"
+	"net/http"
+	"server/internal/app/adapters/http-adapter/codec"
+	"server/internal/app/adapters/http-adapter/constants"
+	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/text_usecase"
+	domain "server/internal/app/domain/text_obj"
+	"server/internal/pkg/logger"
+
+	"go.uber.org/zap"
+)
+
+type CreateTextRequest struct {
+	Title string `json:"title"`
+	Text  string `json:"text"`
+}
+
+type CreateTextResponse struct {
+	CardID int64 `json:"card_id"`
+}
+
+func (h *httpHandler) CreateText() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		const HandlerName = "CreateText"
+
+		var (
+			req  = new(CreateTextRequest)
+			resp = new(CreateTextResponse)
+		)
+
+		err := json.NewDecoder(r.Body).Decode(&req)
+		if err != nil {
+			codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
+			return
+		}
+
+		userID := r.Context().Value(constants.UserIDKey).(int64)
+
+		card := req.toDomain()
+		card.UserId = userID
+
+		id, err := h.service.CreateNewTextObj(r.Context(), card)
+
+		if err != nil {
+			logger.Log.Error(HandlerName, zap.Error(err))
+
+			s, m := errorMapper.Process(err)
+			codec.WriteErrorJSON(w, s, m)
+			return
+		}
+
+		resp.CardID = id
+
+		codec.WriteJSON(w, http.StatusOK, resp)
+	}
+}
+
+func (req CreateTextRequest) toDomain() *domain.Text {
+	return &domain.Text{
+		Title: req.Title,
+		Text:  req.Text,
+	}
+}

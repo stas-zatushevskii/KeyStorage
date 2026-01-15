@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
+	"server/internal/app/adapters/http-adapter/constants"
 	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/bank_card_usecase"
 	domain "server/internal/app/domain/bank_card_obj"
 	"server/internal/pkg/logger"
@@ -12,7 +13,6 @@ import (
 )
 
 type CreateBankCardRequest struct {
-	UserID   int64  `json:"user_id"`
 	BankName string `json:"bank_name"`
 	PID      string `json:"pid"`
 }
@@ -36,7 +36,12 @@ func (h *httpHandler) CreateBankCard() http.HandlerFunc {
 			return
 		}
 
-		id, err := h.service.CreateNewBankCardObj(r.Context(), req.toDomain())
+		userID := r.Context().Value(constants.UserIDKey).(int64)
+
+		account := req.toDomain()
+		account.UserId = userID
+
+		id, err := h.service.CreateNewBankCardObj(r.Context(), account)
 
 		if err != nil {
 			logger.Log.Error(HandlerName, zap.Error(err))
@@ -54,8 +59,7 @@ func (h *httpHandler) CreateBankCard() http.HandlerFunc {
 
 func (req CreateBankCardRequest) toDomain() *domain.BankCard {
 	return &domain.BankCard{
-		UserId: req.UserID,
-		Bank:   req.BankName,
-		Pid:    req.PID,
+		Bank: req.BankName,
+		Pid:  req.PID,
 	}
 }

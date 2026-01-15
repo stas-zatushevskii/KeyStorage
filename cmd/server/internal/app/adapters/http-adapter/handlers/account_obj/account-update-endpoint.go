@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
+	"server/internal/app/adapters/http-adapter/constants"
 	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/account_usecase"
 	domain "server/internal/app/domain/account_obj"
 	"server/internal/pkg/logger"
@@ -17,6 +18,7 @@ type UpdateAccountRequest struct {
 	ServiceName string `json:"service_name"`
 	UserName    string `json:"user_name"`
 	Password    string `json:"password"`
+	AccountId   int64  `json:"account_id"`
 }
 
 func (h *httpHandler) UpdateAccountObj() http.HandlerFunc {
@@ -35,14 +37,17 @@ func (h *httpHandler) UpdateAccountObj() http.HandlerFunc {
 
 		urlId := chi.URLParam(r, "id")
 
-		id, err := strconv.ParseInt(urlId, 10, 64)
+		accountID, err := strconv.ParseInt(urlId, 10, 64)
 		if err != nil {
 			codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid account id")
 			return
 		}
 
+		userID := r.Context().Value(constants.UserIDKey).(int64)
+
 		account := req.toDomain()
-		account.UserId = id
+		account.AccountId = accountID
+		account.UserId = userID
 
 		err = h.service.UpdateAccount(r.Context(), account)
 		if err != nil {
@@ -53,7 +58,7 @@ func (h *httpHandler) UpdateAccountObj() http.HandlerFunc {
 			return
 		}
 
-		codec.WriteJSON(w, http.StatusOK, "updated account successfully")
+		codec.WriteJSON(w, http.StatusOK, "updated card successfully")
 	}
 }
 
@@ -62,5 +67,6 @@ func (u *UpdateAccountRequest) toDomain() *domain.Account {
 		ServiceName: u.ServiceName,
 		UserName:    u.UserName,
 		Password:    u.Password,
+		AccountId:   u.AccountId,
 	}
 }

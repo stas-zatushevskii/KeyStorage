@@ -80,15 +80,9 @@ func (u *Repository) Create(ctx context.Context, account *domain.Account) (int64
 		return 0, fmt.Errorf("failed to encrypt password: %w", err)
 	}
 
-	account.Password = string(encryptedPassword)
-
-	if _, err := u.db.ExecContext(ctx, query, account.UserId, account.ServiceName, account.UserName, account.Password); err != nil {
-		return 0, err
-	}
-
 	var id sql.NullInt64
 
-	if err := u.db.QueryRowContext(ctx, query).Scan(&id); err != nil {
+	if err := u.db.QueryRowContext(ctx, query, account.UserId, account.ServiceName, account.UserName, encryptedPassword).Scan(&id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, domain.ErrFaildeCreateAccountObject
 		}
@@ -113,9 +107,7 @@ func (u *Repository) Update(ctx context.Context, account *domain.Account) error 
 		return fmt.Errorf("failed to encrypt password: %w", err)
 	}
 
-	account.Password = string(encryptedPassword)
-
-	if _, err := u.db.ExecContext(ctx, query, account.ServiceName, account.UserName, account.Password, account.AccountId); err != nil {
+	if _, err := u.db.ExecContext(ctx, query, account.ServiceName, account.UserName, encryptedPassword, account.AccountId); err != nil {
 		return err
 	}
 	return nil

@@ -65,7 +65,7 @@ func (u *Repository) CreateNewUser(ctx context.Context, newUser *user.User) (int
 
 func (u *Repository) AddTokens(ctx context.Context, userId int64, token *token.Tokens) error {
 	query := `
-		INSERT INTO user_tokens (user_id, refresh_token_hash, refresh_token_expires_at, revoked_at)
+		INSERT INTO user_tokens (user_id, refresh_token, refresh_token_expires_at, revoked_at)
 		VALUES ($1, $2, $3, $4)`
 	_, err := u.db.ExecContext(ctx, query, userId, token.RefreshToken, token.RefreshTokenExpAt, nil)
 	if err != nil {
@@ -78,7 +78,7 @@ func (u *Repository) UpdateTokens(ctx context.Context, userId int64, token *toke
 	query := `
 		UPDATE user_tokens
 		SET 
-			refresh_token_hash = $2,
+			refresh_token = $2,
 			refresh_token_expires_at = $3,
 			revoked_at = $4
 		WHERE user_id = $1`
@@ -91,7 +91,7 @@ func (u *Repository) UpdateTokens(ctx context.Context, userId int64, token *toke
 
 func (u *Repository) GetTokens(ctx context.Context, userId int64) (*token.Tokens, error) {
 	query := `
-		SELECT refresh_token_hash, refresh_token_expires_at, revoked_at
+		SELECT refresh_token, refresh_token_expires_at, revoked_at
 		FROM user_tokens
 		WHERE user_id = $1`
 

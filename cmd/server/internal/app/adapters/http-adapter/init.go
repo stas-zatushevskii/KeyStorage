@@ -4,11 +4,12 @@ import (
 	"context"
 	account_router "server/internal/app/adapters/http-adapter/handlers/account_obj"
 	bankCard_router "server/internal/app/adapters/http-adapter/handlers/bank_card_obj"
+	text_router "server/internal/app/adapters/http-adapter/handlers/text_obj"
 	user_router "server/internal/app/adapters/http-adapter/handlers/user"
-
 	"server/internal/app/adapters/http-adapter/middlewares"
 	account "server/internal/app/usecases/account_obj"
 	bankCard "server/internal/app/usecases/bank_card_obj"
+	text "server/internal/app/usecases/text_obj"
 	"server/internal/app/usecases/user"
 	http_server "server/internal/pkg/http-server"
 
@@ -23,6 +24,7 @@ type Srv struct {
 	UserUseCase        *user.User
 	AccountObjUseCase  *account.AccountObj
 	BankCardObjUseCase *bankCard.BankCardObj
+	TextObjUseCase     *text.TextObj
 }
 
 func New(svc *Srv) *HttpAdapter {
@@ -45,6 +47,9 @@ func newRouter(srv *Srv) *chi.Mux {
 	// bank card router
 	bankCardRouter := bankCard_router.New(srv.BankCardObjUseCase)
 
+	// text handler
+	textRouter := text_router.New(srv.TextObjUseCase)
+
 	// create router
 	r := chi.NewRouter()
 
@@ -54,6 +59,7 @@ func newRouter(srv *Srv) *chi.Mux {
 	// mount account object router with jwt authentification middleware
 	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/account", accountRouter)
 	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/card", bankCardRouter)
+	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/text", textRouter)
 
 	return r
 }

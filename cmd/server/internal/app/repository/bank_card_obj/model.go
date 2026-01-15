@@ -9,7 +9,7 @@ type Card struct {
 	ID     sql.NullInt64
 	UserId sql.NullInt64
 	Bank   sql.NullString
-	PID    sql.NullString
+	PID    []byte
 }
 
 func (c *Card) ToDomain() *domain.BankCard {
@@ -17,6 +17,6 @@ func (c *Card) ToDomain() *domain.BankCard {
 		CardId: c.ID.Int64,
 		UserId: c.UserId.Int64,
 		Bank:   c.Bank.String,
-		Pid:    c.PID.String,
+		Pid:    string(c.PID),
 	}
 }

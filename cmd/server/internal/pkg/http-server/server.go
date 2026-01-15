@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"server/internal/app/config"
 	"server/internal/pkg/logger"
-	"strconv"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -18,6 +17,7 @@ type Server struct {
 func New(router http.Handler) *Server {
 	server := &http.Server{
 		Handler: router,
+		Addr:    config.App.GetServerAddr(),
 	}
 
 	s := Server{
@@ -28,7 +28,7 @@ func New(router http.Handler) *Server {
 }
 
 func (a *Server) Start(ctx context.Context) error {
-	logger.Log.Info("HTTP server starting on port: " + strconv.Itoa(config.App.GetServerPort()))
+	logger.Log.Info("HTTP server starting on addr: " + config.App.GetServerAddr())
 
 	g, ctx := errgroup.WithContext(ctx)
 

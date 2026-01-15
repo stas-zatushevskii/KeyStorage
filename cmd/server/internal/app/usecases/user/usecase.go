@@ -54,6 +54,7 @@ func (u *User) Login(ctx context.Context, username, password string) (*token.Tok
 		if !errors.Is(err, domain.ErrUserNotFound) {
 			return nil, fmt.Errorf("failed to find user by username: %w", err)
 		}
+		return nil, fmt.Errorf("got unexpected err: %w", err)
 	}
 	ok, err := hasher.VerifyString(password, user.Password)
 	if !ok {

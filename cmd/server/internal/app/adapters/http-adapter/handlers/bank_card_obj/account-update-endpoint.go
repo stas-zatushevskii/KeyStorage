@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
+	"server/internal/app/adapters/http-adapter/constants"
 	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/bank_card_usecase"
 	domain "server/internal/app/domain/bank_card_obj"
 	"server/internal/pkg/logger"
@@ -32,18 +33,19 @@ func (h *httpHandler) UpdateBankCardObj() http.HandlerFunc {
 			return
 		}
 
-		urlId := chi.URLParam(r, "id")
-
-		id, err := strconv.ParseInt(urlId, 10, 64)
+		cardID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid account id")
+			codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid card id")
 			return
 		}
 
-		account := req.toDomain()
-		account.UserId = id
+		userID := r.Context().Value(constants.UserIDKey).(int64)
 
-		err = h.service.UpdateBankCard(r.Context(), account)
+		card := req.toDomain()
+		card.CardId = cardID
+		card.UserId = userID
+
+		err = h.service.UpdateBankCard(r.Context(), card)
 		if err != nil {
 			logger.Log.Error(HandlerName, zap.Error(err))
 
@@ -52,7 +54,7 @@ func (h *httpHandler) UpdateBankCardObj() http.HandlerFunc {
 			return
 		}
 
-		codec.WriteJSON(w, http.StatusOK, "updated account successfully")
+		codec.WriteJSON(w, http.StatusOK, "updated card successfully")
 	}
 }
 
