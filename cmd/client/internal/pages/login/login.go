@@ -55,11 +55,5 @@ func Login(client *resty.Client, username, password string) (*domain.Token, erro
 	}
 	tokens.SetRefreshToken(respData.RefreshToken)
 
-	// todo: maybe keyring dont needed ?
-	//err = keyring.Save(tokens)
-	//if err != nil {
-	//	return err // fixme: add custom err
-	//}
-
 	return tokens, nil
 }

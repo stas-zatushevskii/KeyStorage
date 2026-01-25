@@ -10,16 +10,17 @@ import (
 	"go.uber.org/zap"
 )
 
-type GetAccountListResponse struct {
-	Accounts []struct {
-		AccountID   int64  `json:"account_id"`
-		ServiceName string `json:"service_name"`
-	} `json:"accounts"`
+type Account struct {
+	AccountID   int64  `json:"account_id"`
+	ServiceName string `json:"service_name"`
+	Username    string `json:"username"`
 }
 
 func (h *httpHandler) GetAccountList() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const HandlerName = "GetAccountList"
+
+		resp := make([]Account, 0)
 
 		userId := r.Context().Value(constants.UserIDKey).(int64)
 
@@ -32,6 +33,15 @@ func (h *httpHandler) GetAccountList() http.HandlerFunc {
 			return
 		}
 
-		codec.WriteJSON(w, http.StatusOK, list)
+		for _, item := range list {
+			c := Account{
+				AccountID:   item.AccountId,
+				ServiceName: item.ServiceName,
+				Username:    item.UserName,
+			}
+			resp = append(resp, c)
+		}
+
+		codec.WriteJSON(w, http.StatusOK, resp)
 	}
 }

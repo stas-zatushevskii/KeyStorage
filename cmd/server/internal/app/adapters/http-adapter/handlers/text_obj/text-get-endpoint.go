@@ -20,6 +20,8 @@ func (h *httpHandler) GetTextObj() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const HandlerName = "GetText"
 
+		var resp = new(TextResponse)
+
 		urlId := chi.URLParam(r, "id")
 
 		id, err := strconv.ParseInt(urlId, 10, 64)
@@ -37,6 +39,9 @@ func (h *httpHandler) GetTextObj() http.HandlerFunc {
 			return
 		}
 
-		codec.WriteJSON(w, http.StatusOK, card)
+		resp.Title = card.Title
+		resp.Text = card.Text
+
+		codec.WriteJSON(w, http.StatusOK, resp)
 	}
 }

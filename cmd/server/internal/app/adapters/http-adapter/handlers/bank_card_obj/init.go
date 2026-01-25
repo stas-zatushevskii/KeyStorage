@@ -31,7 +31,7 @@ func New(service service) *chi.Mux {
 
 	router.Get("/list", handler.GetBankCardList())
 	router.Get("/list/{id}", handler.GetBankCardObj())
-	router.Post("/create/", handler.CreateBankCard())
+	router.Post("/create", handler.CreateBankCard())
 	router.Put("/update/{id}", handler.UpdateBankCardObj())
 
 	return router

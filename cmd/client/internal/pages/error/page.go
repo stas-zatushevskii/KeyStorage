@@ -27,7 +27,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 
 		case "enter":
-			return m, nav.PreviousPageCmd()
+			return m, nav.DoubleBackPageCmd()
 
 		case "q", "ctrl+c":
 			return m, tea.Quit

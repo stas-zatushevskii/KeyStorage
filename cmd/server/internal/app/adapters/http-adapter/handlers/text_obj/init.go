@@ -31,7 +31,7 @@ func New(service service) *chi.Mux {
 
 	router.Get("/list", handler.GetTextList())
 	router.Get("/list/{id}", handler.GetTextObj())
-	router.Post("/create/", handler.CreateText())
+	router.Post("/create", handler.CreateText())
 	router.Put("/update/{id}", handler.UpdateTextObj())
 
 	return router

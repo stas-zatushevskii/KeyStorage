@@ -11,7 +11,7 @@ func (n *Navigator) Push(page tea.Model) {
 }
 
 func (n *Navigator) Pop() {
-	if len(n.stack) > 0 {
+	if len(n.stack) > 1 {
 		n.stack = n.stack[:len(n.stack)-1]
 	}
 }
@@ -46,5 +46,14 @@ type PreviousPage struct {
 func PreviousPageCmd() tea.Cmd {
 	return func() tea.Msg {
 		return PreviousPage{}
+	}
+}
+
+type DoubleBackPage struct {
+}
+
+func DoubleBackPageCmd() tea.Cmd {
+	return func() tea.Msg {
+		return DoubleBackPage{}
 	}
 }

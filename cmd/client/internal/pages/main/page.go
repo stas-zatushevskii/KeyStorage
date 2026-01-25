@@ -1,35 +1,36 @@
-package auth
+package main_page
 
 import (
-	domain "client/internal/domain/token"
+	"client/internal/app"
+	"client/internal/constants"
+	nav "client/internal/navigator"
 	"fmt"
 	"strings"
 
+	"client/internal/pages/obj_types"
+
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/go-resty/resty/v2"
 )
 
 type Model struct {
-	client *resty.Client
-	token  *domain.Token
+	app    *app.Ctx
 	items  []string
 	cursor int
 }
 
 const (
 	MyStorage = "my storage"
-	Upload    = "upload new file"
+	Upload    = "upload"
 )
 
-func NewPage(c *resty.Client, tokens *domain.Token) tea.Model {
+func NewPage(app *app.Ctx) tea.Model {
 	return &Model{
-		client: c,
-		token:  tokens,
 		items: []string{
 			MyStorage,
 			Upload,
 		},
 		cursor: 0,
+		app:    app,
 	}
 }
 
@@ -55,12 +56,18 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "enter":
 			switch m.items[m.cursor] {
+
 			case MyStorage:
-				return m, nil // todo: page MyStorage
+				// LIST mode (показать списки объектов)
+				return m, nav.NextPageCmd(obj_types.NewPage(m.app, constants.ModeList))
+
 			case Upload:
-				return m, nil // todo: page Upload
+				// CREATE mode (создать новый объект)
+				return m, nav.NextPageCmd(obj_types.NewPage(m.app, constants.ModeCreate))
 			}
 			return m, nil
+		case "b":
+			return m, nav.PreviousPageCmd()
 
 		case "q", "ctrl+c":
 			return m, tea.Quit
@@ -74,8 +81,6 @@ func (m Model) View() string {
 	var b strings.Builder
 	b.WriteString("Main page\n\n")
 	b.WriteString("Choose action:\n\n")
-	// fixme
-	b.WriteString(fmt.Sprintf("YOUR JWT: %s\n\n", m.token.GetJWTToken()))
 
 	for i, item := range m.items {
 		cursor := " "
@@ -85,6 +90,6 @@ func (m Model) View() string {
 		b.WriteString(fmt.Sprintf("%s %s\n", cursor, item))
 	}
 
-	b.WriteString("\n(↑/↓ + Enter)\n")
+	b.WriteString("\n[↑/↓] переключение   [Enter] выбрать   [b] назад)\n")
 	return b.String()
 }

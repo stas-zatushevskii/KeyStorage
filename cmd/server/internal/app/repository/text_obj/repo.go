@@ -56,14 +56,10 @@ func (u *Repository) Create(ctx context.Context, card *domain.Text) (int64, erro
 		INSERT INTO text_data (user_id, title, text)
 		VALUES ($1, $2, $3)
 		RETURNING id`
-
-	if _, err := u.db.ExecContext(ctx, query, card.UserId, card.Title, card.Text); err != nil {
-		return 0, err
-	}
-
+	
 	var id sql.NullInt64
 
-	if err := u.db.QueryRowContext(ctx, query).Scan(&id); err != nil {
+	if err := u.db.QueryRowContext(ctx, query, card.UserId, card.Title, card.Text).Scan(&id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return 0, domain.ErrFailedCreateTextObject
 		}

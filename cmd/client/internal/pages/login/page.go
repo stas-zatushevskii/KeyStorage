@@ -1,6 +1,7 @@
 package login
 
 import (
+	"client/internal/app"
 	nav "client/internal/navigator"
 	"strings"
 
@@ -9,16 +10,15 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/go-resty/resty/v2"
 )
 
 type Model struct {
-	client *resty.Client
 	inputs []textinput.Model
 	focus  int
+	app    *app.Ctx
 }
 
-func NewPage(c *resty.Client) tea.Model {
+func NewPage(app *app.Ctx) tea.Model {
 	username := textinput.New()
 	username.Placeholder = "username"
 	username.Prompt = "Username: "
@@ -35,7 +35,7 @@ func NewPage(c *resty.Client) tea.Model {
 	return &Model{
 		inputs: []textinput.Model{username, password},
 		focus:  0,
-		client: c,
+		app:    app,
 	}
 }
 
@@ -66,12 +66,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.focus == submitIndex {
 				username := strings.TrimSpace(m.inputs[0].Value())
 				password := m.inputs[1].Value()
-				tokens, err := Login(m.client, username, password)
+				tokens, err := Login(m.app.HTTP, username, password)
 				if err != nil {
 					return m, nav.NextPageCmd(errorPage.New(err))
 				}
 
-				return m, nav.NextPageCmd(mainPage.NewPage(m.client, tokens))
+				m.app.CreateNewSession()
+				m.app.SetToken(tokens)
+
+				return m, nav.NextPageCmd(mainPage.NewPage(m.app))
 			}
 
 			if m.focus < submitIndex {
@@ -80,7 +83,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 
 		case "esc":
-			m.blurAll()
+			nav.PreviousPageCmd()
 			return m, nil
 
 		case "q", "ctrl+c":
@@ -130,6 +133,6 @@ func (m Model) View() string {
 		b.WriteString("  [ Submit ]\n")
 	}
 
-	b.WriteString("\n(↑/↓ переключение, Enter выбрать)\n")
+	b.WriteString("\n(↑/↓ переключение, Enter выбрать, esc назад)\n")
 	return b.String()
 }

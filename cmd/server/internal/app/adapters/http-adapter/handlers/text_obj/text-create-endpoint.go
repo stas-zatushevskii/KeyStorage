@@ -18,7 +18,7 @@ type CreateTextRequest struct {
 }
 
 type CreateTextResponse struct {
-	CardID int64 `json:"card_id"`
+	TextID int64 `json:"text_id"`
 }
 
 func (h *httpHandler) CreateText() http.HandlerFunc {
@@ -51,7 +51,7 @@ func (h *httpHandler) CreateText() http.HandlerFunc {
 			return
 		}
 
-		resp.CardID = id
+		resp.TextID = id
 
 		codec.WriteJSON(w, http.StatusOK, resp)
 	}

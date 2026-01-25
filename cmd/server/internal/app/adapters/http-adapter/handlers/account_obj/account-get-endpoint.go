@@ -21,6 +21,8 @@ func (h *httpHandler) GetAccountObj() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const HandlerName = "GetAccount"
 
+		var resp = new(AccountResponse)
+
 		urlId := chi.URLParam(r, "id")
 
 		id, err := strconv.ParseInt(urlId, 10, 64)
@@ -38,6 +40,10 @@ func (h *httpHandler) GetAccountObj() http.HandlerFunc {
 			return
 		}
 
-		codec.WriteJSON(w, http.StatusOK, account)
+		resp.ServiceName = account.ServiceName
+		resp.Username = account.UserName
+		resp.Password = account.Password
+
+		codec.WriteJSON(w, http.StatusOK, resp)
 	}
 }

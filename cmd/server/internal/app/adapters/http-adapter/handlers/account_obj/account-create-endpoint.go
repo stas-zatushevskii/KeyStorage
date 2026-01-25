@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
+	"server/internal/app/adapters/http-adapter/constants"
 	errorMapper "server/internal/app/adapters/http-adapter/error-mapper/account_usecase"
 	domain "server/internal/app/domain/account_obj"
 	"server/internal/pkg/logger"
@@ -12,7 +13,6 @@ import (
 )
 
 type CreateAccountRequest struct {
-	UserID      int64  `json:"user_id"`
 	ServiceName string `json:"service_name"`
 	UserName    string `json:"user_name"`
 	Password    string `json:"password"`
@@ -37,7 +37,12 @@ func (h *httpHandler) CreateAccount() http.HandlerFunc {
 			return
 		}
 
-		id, err := h.service.CreateNewAccountObj(r.Context(), req.toDomain())
+		userID := r.Context().Value(constants.UserIDKey).(int64)
+
+		account := req.toDomain()
+		account.UserId = userID
+
+		id, err := h.service.CreateNewAccountObj(r.Context(), account)
 
 		if err != nil {
 			logger.Log.Error(HandlerName, zap.Error(err))

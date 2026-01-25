@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 type (
@@ -15,7 +14,7 @@ type (
 		Client *resty.Client
 		URL    string
 		Data   any
-		JWT    *jwt.Token
+		JWT    string
 	}
 	Method int
 )
@@ -40,8 +39,8 @@ func SendJSONRequest(c context.Context, method Method, cmd SendDataCmd) (*resty.
 		SetContext(ctx).
 		SetBody(data)
 
-	if cmd.JWT != nil {
-		cmd.Client.SetHeader("Authorization", cmd.JWT.Raw)
+	if cmd.JWT != "" {
+		cmd.Client.SetHeader("Authorization", cmd.JWT)
 	}
 
 	switch method {
@@ -64,8 +63,8 @@ func SendFormDataRequest(c context.Context, cmd SendDataCmd) (*resty.Response, e
 		SetContext(ctx).
 		SetBody(cmd.Data)
 
-	if cmd.JWT != nil {
-		cmd.Client.SetHeader("Authorization", cmd.JWT.Raw)
+	if cmd.JWT != "" {
+		cmd.Client.SetHeader("Authorization", cmd.JWT)
 	}
 
 	return req.Post(cmd.URL)

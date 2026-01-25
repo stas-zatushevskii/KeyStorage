@@ -1,19 +1,19 @@
 package auth
 
 import (
+	"client/internal/app"
 	"fmt"
 	"strings"
 
 	nav "client/internal/navigator"
 	"client/internal/pages/login"
-	reg "client/internal/pages/registration"
+	"client/internal/pages/registration"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/go-resty/resty/v2"
 )
 
 type Model struct {
-	client *resty.Client
+	appCtx *app.Ctx
 	items  []string
 	cursor int
 }
@@ -23,14 +23,14 @@ const (
 	Login        = "login"
 )
 
-func NewPage(c *resty.Client) tea.Model {
+func NewPage(app *app.Ctx) tea.Model {
 	return &Model{
 		items: []string{
 			Registration,
 			Login,
 		},
 		cursor: 0,
-		client: c,
+		appCtx: app,
 	}
 }
 
@@ -59,9 +59,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			switch m.items[m.cursor] {
 			case Registration:
-				return m, nav.NextPageCmd(reg.NewPage(m.client))
+				return m, nav.NextPageCmd(registration.NewPage(m.appCtx))
 			case Login:
-				return m, nav.NextPageCmd(login.NewPage(m.client))
+				return m, nav.NextPageCmd(login.NewPage(m.appCtx))
 			}
 			return m, nil
 
@@ -87,6 +87,6 @@ func (m Model) View() string {
 		b.WriteString(fmt.Sprintf("%s %s\n", cursor, item))
 	}
 
-	b.WriteString("\n(↑/↓ + Enter)\n")
+	b.WriteString("\n[↑/↓] переключение   [Enter] выбор)\n")
 	return b.String()
 }

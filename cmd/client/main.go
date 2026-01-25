@@ -15,9 +15,11 @@ func main() {
 
 	client := resty.New()
 
-	navigator.Push(auth.NewPage(client))
+	appCtx := app.NewCtx(client)
 
-	root := app.New(navigator, &app.UserState{})
+	navigator.Push(auth.NewPage(appCtx))
+
+	root := app.New(navigator)
 
 	p := tea.NewProgram(root)
 

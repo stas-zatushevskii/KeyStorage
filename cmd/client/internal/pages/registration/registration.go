@@ -22,7 +22,7 @@ type registrationResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-// Registration create new User, get tokens, save in keyring
+// Registration create new User, get tokens
 func Registration(client *resty.Client, username, password string) (*domain.Token, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -60,12 +60,6 @@ func Registration(client *resty.Client, username, password string) (*domain.Toke
 		return nil, err // fixme: add custom err
 	}
 	tokens.SetRefreshToken(respData.RefreshToken)
-
-	// todo: maybe keyring dont needed ?
-	//err = keyring.Save(tokens)
-	//if err != nil {
-	//	return err // fixme: add custom err
-	//}
 
 	return tokens, nil
 }

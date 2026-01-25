@@ -10,16 +10,15 @@ import (
 	"go.uber.org/zap"
 )
 
-type GetTextResponse struct {
-	Texts []struct {
-		TextID int64  `json:"text_id"`
-		Title  string `json:"title"`
-	} `json:"texts"`
+type Text struct {
+	TextID int64  `json:"text_id"`
+	Title  string `json:"title"`
 }
 
 func (h *httpHandler) GetTextList() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		const HandlerName = "GetTextList"
+		resp := make([]Text, 0)
 
 		userId := r.Context().Value(constants.UserIDKey).(int64)
 
@@ -32,6 +31,14 @@ func (h *httpHandler) GetTextList() http.HandlerFunc {
 			return
 		}
 
-		codec.WriteJSON(w, http.StatusOK, list)
+		for _, item := range list {
+			c := Text{
+				Title:  item.Title,
+				TextID: item.TextId,
+			}
+			resp = append(resp, c)
+		}
+
+		codec.WriteJSON(w, http.StatusOK, resp)
 	}
 }

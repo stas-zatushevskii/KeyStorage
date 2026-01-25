@@ -31,8 +31,7 @@ func New(service service) *chi.Mux {
 	handler := newHandler(service)
 
 	r.Post("/auth/register", handler.RegistrationHandler())
-
-	r.With(middlewares.JWTMiddleware(service)).Post("/auth/login", handler.LoginHandler())
+	r.Post("/auth/login", handler.LoginHandler())
 	r.With(middlewares.JWTMiddleware(service)).Post("/auth/refresh", handler.RefreshTokenHandler())
 
 	return r
