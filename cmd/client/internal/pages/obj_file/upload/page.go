@@ -1,4 +1,4 @@
-package create
+package upload
 
 import (
 	"client/internal/app"
@@ -12,27 +12,27 @@ import (
 )
 
 type Model struct {
-	app    *app.Ctx
-	inputs []textinput.Model
-	focus  int
+	app       *app.Ctx
+	inputs    []textinput.Model
+	focus     int
+	uploading bool
+}
+
+type uploadDoneMsg struct {
+	err error
 }
 
 func NewPage(app *app.Ctx) tea.Model {
-	username := textinput.New()
-	username.Placeholder = "Title"
-	username.Prompt = "Title: "
-	username.CharLimit = 64
-	username.Focus()
-
-	password := textinput.New()
-	password.Placeholder = "Text"
-	password.Prompt = "Text: "
-	password.CharLimit = 512
+	path := textinput.New()
+	path.Placeholder = "/path/to/file.ext"
+	path.Prompt = "File path: "
+	path.CharLimit = 512
+	path.Focus()
 
 	return &Model{
-		inputs: []textinput.Model{username, password},
-		focus:  0,
 		app:    app,
+		inputs: []textinput.Model{path},
+		focus:  0,
 	}
 }
 
@@ -43,25 +43,57 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	submitIndex := len(m.inputs)
 
-	switch msg := msg.(type) {
+	switch x := msg.(type) {
+
+	case uploadDoneMsg:
+		m.uploading = false
+		if x.err != nil {
+			return m, nav.NextPageCmd(errorPage.New(x.err))
+		}
+		return m, nav.PreviousPageCmd()
+
 	case tea.KeyMsg:
-		switch msg.String() {
+		switch x.String() {
+		case "q", "ctrl+c":
+			return m, tea.Quit
+
+		case "tab":
+			if m.uploading {
+				return m, nil
+			}
+			return m, nav.PreviousPageCmd()
 
 		case "up", "k":
+			if m.uploading {
+				return m, nil
+			}
 			if m.focus > 0 {
 				m.setFocus(m.focus - 1)
 			}
 			return m, nil
 
 		case "down", "j":
+			if m.uploading {
+				return m, nil
+			}
 			if m.focus < submitIndex {
 				m.setFocus(m.focus + 1)
 			}
 			return m, nil
 
 		case "enter":
+			if m.uploading {
+				return m, nil
+			}
+
+			// Нажали на submit
 			if m.focus == submitIndex {
-				if err := CreateTextObj(m.app, m.inputs[0].Value(), m.inputs[1].Value()); err != nil {
+				m.uploading = true
+
+				filePath := strings.TrimSpace(m.inputs[0].Value())
+
+				err := UploadFileObj(m.app, filePath)
+				if err != nil {
 					return m, nav.NextPageCmd(errorPage.New(err))
 				}
 
@@ -72,15 +104,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.setFocus(m.focus + 1)
 			}
 			return m, nil
-
-		case "tab":
-			return m, nav.PreviousPageCmd()
-
-		case "q", "ctrl+c":
-			return m, tea.Quit
 		}
 	}
 
+	// Пока идёт выгрузка — поля не редактируем
+	if m.uploading {
+		return m, nil
+	}
+
+	// Обновляем активный input
 	if m.focus < len(m.inputs) {
 		var cmd tea.Cmd
 		m.inputs[m.focus], cmd = m.inputs[m.focus].Update(msg)
@@ -106,7 +138,7 @@ func (m *Model) blurAll() {
 
 func (m Model) View() string {
 	var b strings.Builder
-	b.WriteString("Create new text\n\n")
+	b.WriteString("Upload file\n\n")
 
 	// поля
 	for i := range m.inputs {
@@ -118,11 +150,19 @@ func (m Model) View() string {
 
 	// submit “кнопка”
 	if m.focus == len(m.inputs) {
-		b.WriteString("> [ Submit ]\n")
+		b.WriteString("> [ Upload ]\n")
 	} else {
-		b.WriteString("  [ Submit ]\n")
+		b.WriteString("  [ Upload ]\n")
 	}
 
-	b.WriteString("\n[↑/↓] переключение   [Enter] выбрать   [tab] назад)\n")
+	b.WriteString("\n")
+
+	if m.uploading {
+		b.WriteString("Uploading... please wait\n")
+		b.WriteString("(Esc/back disabled while uploading)\n")
+	} else {
+		b.WriteString("[↑/↓] switch   [Enter] select   [tab] back   [q] quit\n")
+	}
+
 	return b.String()
 }

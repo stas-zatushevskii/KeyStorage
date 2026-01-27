@@ -4,22 +4,19 @@ import (
 	"errors"
 	"net/http"
 	"server/internal/app/adapters/http-adapter/codec"
+	"server/internal/app/adapters/http-adapter/constants"
 	domain "server/internal/app/domain/file_obj"
-
-	"github.com/go-chi/chi/v5"
 )
 
+type fileResponse struct {
+	ID    int64  `json:"id"`
+	Title string `json:"title"`
+}
+
 func (h *FileHandler) ListByUserID(w http.ResponseWriter, r *http.Request) {
-	userID, err := parseInt64Param(chi.URLParam(r, "userId"))
-	if err != nil {
-		codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid userId")
-		return
-	}
+	userId := r.Context().Value(constants.UserIDKey).(int64)
 
-	limit := parseIntQuery(r, "limit", 50)
-	offset := parseIntQuery(r, "offset", 0)
-
-	list, err := h.uc.GetFileList(r.Context(), userID, limit, offset)
+	list, err := h.uc.GetFileList(r.Context(), userId)
 	if err != nil {
 		switch {
 		case errors.Is(err, domain.ErrInvalidUserID):
@@ -34,7 +31,12 @@ func (h *FileHandler) ListByUserID(w http.ResponseWriter, r *http.Request) {
 
 	resp := make([]fileResponse, 0, len(list))
 	for _, f := range list {
-		resp = append(resp, *mapFile(f))
+		resp = append(
+			resp,
+			fileResponse{
+				ID:    f.ID,
+				Title: f.Title,
+			})
 	}
 
 	codec.WriteJSON(w, http.StatusOK, resp)

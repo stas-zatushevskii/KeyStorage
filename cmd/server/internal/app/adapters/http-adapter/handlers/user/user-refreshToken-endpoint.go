@@ -20,33 +20,31 @@ type RefreshTokenResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-func (h *httpHandler) RefreshTokenHandler() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "RefreshTokenHandler"
+func (h *HttpHandler) RefreshTokenHandler(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "RefreshTokenHandler"
 
-		var (
-			req  = new(RefreshTokenRequest)
-			resp = new(RefreshTokenResponse)
-		)
+	var (
+		req  = new(RefreshTokenRequest)
+		resp = new(RefreshTokenResponse)
+	)
 
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
-			return
-		}
-
-		tokens, err := h.service.RefreshJWTToken(r.Context(), req.Username, req.Password)
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
-
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		resp.Token = tokens.JWTToken
-		resp.RefreshToken = tokens.RefreshToken
-
-		codec.WriteJSON(w, http.StatusOK, resp)
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
+		return
 	}
+
+	tokens, err := h.service.RefreshJWTToken(r.Context(), req.Username, req.Password)
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
+
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
+	}
+
+	resp.Token = tokens.JWTToken
+	resp.RefreshToken = tokens.RefreshToken
+
+	codec.WriteJSON(w, http.StatusOK, resp)
 }

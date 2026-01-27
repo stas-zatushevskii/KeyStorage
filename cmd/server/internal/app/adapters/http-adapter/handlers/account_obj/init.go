@@ -14,25 +14,23 @@ type service interface {
 	UpdateAccount(ctx context.Context, account *domain.Account) error
 }
 
-type httpHandler struct {
+type HttpHandler struct {
 	service service
 }
 
-func newHandler(s service) *httpHandler {
-	return &httpHandler{
-		service: s,
+func New(service service) *HttpHandler {
+	return &HttpHandler{
+		service: service,
 	}
 }
 
-func New(service service) *chi.Mux {
+func (h *HttpHandler) Routes() *chi.Mux {
 	router := chi.NewRouter()
 
-	handler := newHandler(service)
-
-	router.Get("/list", handler.GetAccountList())
-	router.Get("/list/{id}", handler.GetAccountObj())
-	router.Post("/create", handler.CreateAccount())
-	router.Put("/update/{id}", handler.UpdateAccountObj())
+	router.Get("/list", h.GetAccountList)
+	router.Get("/list/{id}", h.GetAccountObj)
+	router.Post("/create", h.CreateAccount)
+	router.Put("/update/{id}", h.UpdateAccountObj)
 
 	return router
 }

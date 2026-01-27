@@ -21,45 +21,44 @@ type UpdateAccountRequest struct {
 	AccountId   int64  `json:"account_id"`
 }
 
-func (h *httpHandler) UpdateAccountObj() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "UpdateAccountObj"
+func (h *HttpHandler) UpdateAccountObj(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "UpdateAccountObj"
 
-		var (
-			req = new(UpdateAccountRequest)
-		)
+	var (
+		req = new(UpdateAccountRequest)
+	)
 
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
-			return
-		}
-
-		urlId := chi.URLParam(r, "id")
-
-		accountID, err := strconv.ParseInt(urlId, 10, 64)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid account id")
-			return
-		}
-
-		userID := r.Context().Value(constants.UserIDKey).(int64)
-
-		account := req.toDomain()
-		account.AccountId = accountID
-		account.UserId = userID
-
-		err = h.service.UpdateAccount(r.Context(), account)
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
-
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		codec.WriteJSON(w, http.StatusOK, "updated card successfully")
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
+		return
 	}
+
+	urlId := chi.URLParam(r, "id")
+
+	accountID, err := strconv.ParseInt(urlId, 10, 64)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid account id")
+		return
+	}
+
+	userID := r.Context().Value(constants.UserIDKey).(int64)
+
+	account := req.toDomain()
+	account.AccountId = accountID
+	account.UserId = userID
+
+	err = h.service.UpdateAccount(r.Context(), account)
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
+
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
+	}
+
+	codec.WriteJSON(w, http.StatusOK, "updated card successfully")
+	return
 }
 
 func (u *UpdateAccountRequest) toDomain() *domain.Account {

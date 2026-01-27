@@ -3,6 +3,7 @@ package bank_card_obj
 import (
 	"context"
 	domain "server/internal/app/domain/bank_card_obj"
+	usecase "server/internal/app/usecases/file_obj"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -14,25 +15,21 @@ type service interface {
 	UpdateBankCard(ctx context.Context, card *domain.BankCard) error
 }
 
-type httpHandler struct {
+type HttpHandler struct {
 	service service
 }
 
-func newHandler(s service) *httpHandler {
-	return &httpHandler{
-		service: s,
-	}
+func New(s service) *HttpHandler {
+	return &HttpHandler{service: s}
 }
 
-func New(service service) *chi.Mux {
+func (h *HttpHandler) Routes() *chi.Mux {
 	router := chi.NewRouter()
 
-	handler := newHandler(service)
-
-	router.Get("/list", handler.GetBankCardList())
-	router.Get("/list/{id}", handler.GetBankCardObj())
-	router.Post("/create", handler.CreateBankCard())
-	router.Put("/update/{id}", handler.UpdateBankCardObj())
+	router.Get("/list", h.GetBankCardList)
+	router.Get("/list/{id}", h.GetBankCardObj)
+	router.Post("/create", h.CreateBankCard)
+	router.Put("/update/{id}", h.UpdateBankCardObj)
 
 	return router
 }

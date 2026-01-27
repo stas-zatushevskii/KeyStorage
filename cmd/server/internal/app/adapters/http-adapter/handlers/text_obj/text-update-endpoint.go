@@ -19,43 +19,42 @@ type UpdateTextRequest struct {
 	Text  string `json:"Text"`
 }
 
-func (h *httpHandler) UpdateTextObj() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "UpdateTextObj"
+func (h *HttpHandler) UpdateTextObj(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "UpdateTextObj"
 
-		var (
-			req = new(UpdateTextRequest)
-		)
+	var (
+		req = new(UpdateTextRequest)
+	)
 
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
-			return
-		}
-
-		userID := r.Context().Value(constants.UserIDKey).(int64)
-
-		textID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid text id")
-			return
-		}
-
-		text := req.toDomain()
-		text.UserId = userID
-		text.TextId = textID
-
-		err = h.service.UpdateText(r.Context(), text)
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
-
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		codec.WriteJSON(w, http.StatusOK, "updated text successfully")
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
+		return
 	}
+
+	userID := r.Context().Value(constants.UserIDKey).(int64)
+
+	textID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid text id")
+		return
+	}
+
+	text := req.toDomain()
+	text.UserId = userID
+	text.TextId = textID
+
+	err = h.service.UpdateText(r.Context(), text)
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
+
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
+	}
+
+	codec.WriteJSON(w, http.StatusOK, "updated text successfully")
+
 }
 
 func (u *UpdateTextRequest) toDomain() *domain.Text {

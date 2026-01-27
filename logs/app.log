@@ -101,3 +101,76 @@
 {"level":"error","timestamp":"2026-01-08 00:22:42","msg":"Failed create Application","error":"[Db] failed to connect to database: [Db] database ping failed: failed to connect to `user=staszatusevckij database=`: /private/tmp/.s.PGSQL.5432 (/private/tmp): failed SASL auth: FATAL: password authentication failed for user \"staszatusevckij\" (SQLSTATE 28P01)"}
 {"level":"info","timestamp":"2026-01-08 00:23:16","msg":"[Db] set connection to database: host=db user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"}
 {"level":"error","timestamp":"2026-01-08 00:23:16","msg":"Failed create Application","error":"[Db] failed to connect to database: [Db] database ping failed: failed to connect to `user=postgres database=postgres`: hostname resolving error: lookup db: no such host"}
+{"level":"info","timestamp":"2026-01-13 21:52:20","msg":"[Db] set connection to database: host=db user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"}
+{"level":"error","timestamp":"2026-01-13 21:52:20","msg":"Failed to create Application","error":"failed to connect to database: [Db] database ping failed: failed to connect to `user=postgres database=postgres`: hostname resolving error: lookup db: no such host"}
+{"level":"info","timestamp":"2026-01-13 21:57:49","msg":"[Db] set connection to database: host=localhost user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"}
+{"level":"error","timestamp":"2026-01-13 21:57:49","msg":"Failed to create Application","error":"failed to connect to database: [Db] database ping failed: failed to connect to `user=postgres database=postgres`: [::1]:5432 (localhost): failed SASL auth: FATAL: password authentication failed for user \"postgres\" (SQLSTATE 28P01)"}
+{"level":"info","timestamp":"2026-01-13 21:58:02","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 21:58:02","msg":"[Db] set database connection","debug":true}
+{"level":"error","timestamp":"2026-01-13 21:58:02","msg":"Failed to create Application","error":"failed to setup database: ERROR: cannot drop table users because other objects depend on it (SQLSTATE 2BP01)"}
+{"level":"info","timestamp":"2026-01-13 21:59:50","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 21:59:50","msg":"[Db] set database connection","debug":true}
+{"level":"error","timestamp":"2026-01-13 21:59:50","msg":"Failed to create Application","error":"failed to setup database: ERROR: cannot drop table users because other objects depend on it (SQLSTATE 2BP01)"}
+{"level":"info","timestamp":"2026-01-13 22:00:24","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:00:24","msg":"[Db] set database connection","debug":true}
+{"level":"error","timestamp":"2026-01-13 22:00:24","msg":"Failed to create Application","error":"failed to setup database: ERROR: relation \"account_data\" already exists (SQLSTATE 42P07)"}
+{"level":"info","timestamp":"2026-01-13 22:01:46","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:01:46","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-13 22:01:46","msg":"HTTP server starting on port: 8080"}
+{"level":"error","timestamp":"2026-01-13 22:02:47","msg":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:02:47","msg":"GracefulShutDown started"}
+{"level":"error","timestamp":"2026-01-13 22:02:47","msg":"Application stopped gracefully"}
+{"level":"error","timestamp":"2026-01-13 22:02:47","msg":"Failed to start application","error":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:02:48","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:02:48","msg":"[Db] set database connection","debug":true}
+{"level":"error","timestamp":"2026-01-13 22:02:48","msg":"Failed to create Application","error":"failed to setup database: ERROR: cannot drop table users because other objects depend on it (SQLSTATE 2BP01)"}
+{"level":"info","timestamp":"2026-01-13 22:03:16","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:03:16","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-13 22:03:16","msg":"HTTP server starting on port: 8080"}
+{"level":"error","timestamp":"2026-01-13 22:06:03","msg":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:06:03","msg":"GracefulShutDown started"}
+{"level":"error","timestamp":"2026-01-13 22:06:03","msg":"Application stopped gracefully"}
+{"level":"error","timestamp":"2026-01-13 22:06:03","msg":"Failed to start application","error":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:07:22","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:07:22","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-13 22:07:22","msg":"HTTP server starting on port: 8080"}
+{"level":"error","timestamp":"2026-01-13 22:07:43","msg":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:07:43","msg":"GracefulShutDown started"}
+{"level":"error","timestamp":"2026-01-13 22:07:43","msg":"Application stopped gracefully"}
+{"level":"error","timestamp":"2026-01-13 22:07:43","msg":"Failed to start application","error":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:10:30","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:10:30","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-13 22:10:30","msg":"HTTP server starting on port: 8080"}
+{"level":"error","timestamp":"2026-01-13 22:12:06","msg":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:12:06","msg":"GracefulShutDown started"}
+{"level":"error","timestamp":"2026-01-13 22:12:06","msg":"Application stopped gracefully"}
+{"level":"error","timestamp":"2026-01-13 22:12:06","msg":"Failed to start application","error":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:12:08","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:12:08","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-13 22:12:08","msg":"HTTP server starting on addr: 127.0.0.1:8080"}
+{"level":"error","timestamp":"2026-01-13 22:18:14","msg":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:18:14","msg":"GracefulShutDown started"}
+{"level":"error","timestamp":"2026-01-13 22:18:14","msg":"Application stopped gracefully"}
+{"level":"error","timestamp":"2026-01-13 22:18:14","msg":"Failed to start application","error":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:18:16","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:18:16","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-13 22:18:16","msg":"HTTP server starting on addr: 127.0.0.1:8080"}
+{"level":"error","timestamp":"2026-01-13 22:20:41","msg":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:20:41","msg":"GracefulShutDown started"}
+{"level":"error","timestamp":"2026-01-13 22:20:41","msg":"Application stopped gracefully"}
+{"level":"error","timestamp":"2026-01-13 22:20:41","msg":"Failed to start application","error":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:20:43","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:20:43","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-13 22:20:43","msg":"HTTP server starting on addr: 127.0.0.1:8080"}
+{"level":"error","timestamp":"2026-01-13 22:26:23","msg":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:26:23","msg":"GracefulShutDown started"}
+{"level":"error","timestamp":"2026-01-13 22:26:23","msg":"Application stopped gracefully"}
+{"level":"error","timestamp":"2026-01-13 22:26:23","msg":"Failed to start application","error":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:26:25","msg":"[Db] set connection to database: host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"}
+{"level":"info","timestamp":"2026-01-13 22:26:25","msg":"[Db] set database connection","debug":true}
+{"level":"info","timestamp":"2026-01-13 22:26:25","msg":"HTTP server starting on addr: 127.0.0.1:8080"}
+{"level":"error","timestamp":"2026-01-13 22:26:29","msg":"LoginHandler","error":"got unexpected err: user not found"}
+{"level":"error","timestamp":"2026-01-13 22:31:59","msg":"received signal from OS [interrupt]"}
+{"level":"info","timestamp":"2026-01-13 22:31:59","msg":"GracefulShutDown started"}
+{"level":"error","timestamp":"2026-01-13 22:31:59","msg":"Application stopped gracefully"}
+{"level":"error","timestamp":"2026-01-13 22:31:59","msg":"Failed to start application","error":"received signal from OS [interrupt]"}

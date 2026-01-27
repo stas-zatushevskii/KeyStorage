@@ -17,33 +17,32 @@ type AccountResponse struct {
 	Password    string `json:"password"`
 }
 
-func (h *httpHandler) GetAccountObj() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "GetAccount"
+func (h *HttpHandler) GetAccountObj(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "GetAccount"
 
-		var resp = new(AccountResponse)
+	var resp = new(AccountResponse)
 
-		urlId := chi.URLParam(r, "id")
+	urlId := chi.URLParam(r, "id")
 
-		id, err := strconv.ParseInt(urlId, 10, 64)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid account id")
-			return
-		}
-
-		account, err := h.service.GetAccount(r.Context(), id)
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
-
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		resp.ServiceName = account.ServiceName
-		resp.Username = account.UserName
-		resp.Password = account.Password
-
-		codec.WriteJSON(w, http.StatusOK, resp)
+	id, err := strconv.ParseInt(urlId, 10, 64)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid account id")
+		return
 	}
+
+	account, err := h.service.GetAccount(r.Context(), id)
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
+
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
+	}
+
+	resp.ServiceName = account.ServiceName
+	resp.Username = account.UserName
+	resp.Password = account.Password
+
+	codec.WriteJSON(w, http.StatusOK, resp)
+	return
 }

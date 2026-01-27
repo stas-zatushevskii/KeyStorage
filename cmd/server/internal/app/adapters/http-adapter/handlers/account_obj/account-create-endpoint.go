@@ -22,44 +22,43 @@ type CreateAccountResponse struct {
 	AccountID int64 `json:"account_id"`
 }
 
-func (h *httpHandler) CreateAccount() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "CreateAccount"
+func (h *HttpHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "CreateAccount"
 
-		var (
-			req  = new(CreateAccountRequest)
-			resp = new(CreateAccountResponse)
-		)
+	var (
+		req  = new(CreateAccountRequest)
+		resp = new(CreateAccountResponse)
+	)
 
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
-			return
-		}
-
-		userID := r.Context().Value(constants.UserIDKey).(int64)
-
-		account := req.toDomain()
-		account.UserId = userID
-
-		id, err := h.service.CreateNewAccountObj(r.Context(), account)
-
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
-
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		resp.AccountID = id
-
-		codec.WriteJSON(w, http.StatusOK, resp)
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
+		return
 	}
+
+	userID := r.Context().Value(constants.UserIDKey).(int64)
+
+	account := req.toDomain()
+	account.UserId = userID
+
+	id, err := h.service.CreateNewAccountObj(r.Context(), account)
+
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
+
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
+	}
+
+	resp.AccountID = id
+
+	codec.WriteJSON(w, http.StatusOK, resp)
+	return
 }
 
 func (req CreateAccountRequest) toDomain() *domain.Account {
-	return &domain.Account{UserId: req.UserID,
+	return &domain.Account{
 		ServiceName: req.ServiceName,
 		UserName:    req.UserName,
 		Password:    req.Password}

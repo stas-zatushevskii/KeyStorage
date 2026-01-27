@@ -5,9 +5,6 @@ import (
 	"time"
 )
 
-type FileID int64
-type UserID int64
-
 type StorageRef struct {
 	BucketName string
 	ObjectKey  string
@@ -31,8 +28,8 @@ func NewStorageRef(bucketName, objectKey string) (StorageRef, error) {
 }
 
 type File struct {
-	ID          FileID
-	UserID      UserID
+	ID          int64
+	UserID      int64
 	Title       string
 	Storage     StorageRef
 	SizeBytes   int64
@@ -42,12 +39,11 @@ type File struct {
 }
 
 func NewFile(
-	userID UserID,
+	userID int64,
 	title string,
 	storage StorageRef,
 	sizeBytes int64,
 	contentType string,
-	etag string,
 ) (*File, error) {
 	if userID <= 0 {
 		return nil, ErrInvalidUserID
@@ -63,7 +59,7 @@ func NewFile(
 		Storage:     storage,
 		SizeBytes:   sizeBytes,
 		ContentType: strings.TrimSpace(contentType),
-		ETag:        strings.TrimSpace(etag),
+		ETag:        "",
 		CreatedAt:   time.Time{},
 	}, nil
 }

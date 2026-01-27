@@ -16,32 +16,30 @@ type Account struct {
 	Username    string `json:"username"`
 }
 
-func (h *httpHandler) GetAccountList() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "GetAccountList"
+func (h *HttpHandler) GetAccountList(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "GetAccountList"
 
-		resp := make([]Account, 0)
+	resp := make([]Account, 0)
 
-		userId := r.Context().Value(constants.UserIDKey).(int64)
+	userId := r.Context().Value(constants.UserIDKey).(int64)
 
-		list, err := h.service.GetAccountsList(r.Context(), userId)
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
+	list, err := h.service.GetAccountsList(r.Context(), userId)
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
 
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		for _, item := range list {
-			c := Account{
-				AccountID:   item.AccountId,
-				ServiceName: item.ServiceName,
-				Username:    item.UserName,
-			}
-			resp = append(resp, c)
-		}
-
-		codec.WriteJSON(w, http.StatusOK, resp)
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
 	}
+
+	for _, item := range list {
+		c := Account{
+			AccountID:   item.AccountId,
+			ServiceName: item.ServiceName,
+			Username:    item.UserName,
+		}
+		resp = append(resp, c)
+	}
+
+	codec.WriteJSON(w, http.StatusOK, resp)
 }

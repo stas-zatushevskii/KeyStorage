@@ -7,14 +7,17 @@ import (
 	os_signal_adapter "server/internal/app/adapters/os-signal-adapter"
 	accountRepository "server/internal/app/repository/accout_obj"
 	bankCardRepository "server/internal/app/repository/bank_card_obj"
+	fileRepository "server/internal/app/repository/file_obj"
 	textRepository "server/internal/app/repository/text_obj"
 	userReporitory "server/internal/app/repository/user"
 	accountUsecase "server/internal/app/usecases/account_obj"
 	bankCardUsecase "server/internal/app/usecases/bank_card_obj"
+	fileUsecase "server/internal/app/usecases/file_obj"
 	textUsecase "server/internal/app/usecases/text_obj"
 	userUsecase "server/internal/app/usecases/user"
 	"server/internal/pkg/graceful"
-	db "server/internal/pkg/postgres"
+	"server/internal/pkg/minio"
+	postgres "server/internal/pkg/postgres"
 )
 
 type App struct {
@@ -24,12 +27,22 @@ type App struct {
 
 func New() (*App, error) {
 
-	database, err := db.NewConnection()
+	// postgres
+	database, err := postgres.NewConnection()
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
-	if err = db.SetupDatabase(database); err != nil {
+	if err = postgres.SetupDatabase(database); err != nil {
 		return nil, fmt.Errorf("failed to setup database: %v", err)
+	}
+
+	// minio
+	fileStorage, err := minio.NewConnection()
+	if err != nil {
+		return nil, fmt.Errorf("failed to setup minio connection: %v", err)
+	}
+	if err = fileStorage.InitMinio(); err != nil {
+		return nil, fmt.Errorf("failed to setup minio connection: %v", err)
 	}
 
 	// os signals
@@ -41,6 +54,7 @@ func New() (*App, error) {
 		AccountObjUseCase:  accountUsecase.New(accountRepository.New(database)),
 		BankCardObjUseCase: bankCardUsecase.New(bankCardRepository.New(database)),
 		TextObjUseCase:     textUsecase.New(textRepository.New(database)),
+		FileObjUseCase:     fileUsecase.New(fileRepository.New(database), fileStorage),
 	})
 
 	// todo add grpc

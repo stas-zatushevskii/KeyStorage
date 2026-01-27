@@ -60,9 +60,11 @@ type Logger struct {
 }
 
 type Minio struct {
-	MinioEndpoint     string `yaml:"minio_endpoint"`
+	MinioEndpoint     string `yaml:"endpoint"`
 	BucketName        string `yaml:"bucket_name"`
 	MinioRootUser     string `yaml:"minio_root_user"`
 	MinioRootPassword string `yaml:"minio_root_password"`
 	MinioUseSSL       bool   `yaml:"minio_use_ssl"`
+	MinioAccessKey    string `yaml:"accessKey"`
+	MinioSecretKey    string `yaml:"secretKey"`
 }

@@ -14,25 +14,21 @@ type service interface {
 	UpdateText(ctx context.Context, card *domain.Text) error
 }
 
-type httpHandler struct {
+type HttpHandler struct {
 	service service
 }
 
-func newHandler(s service) *httpHandler {
-	return &httpHandler{
-		service: s,
-	}
+func New(uc service) *HttpHandler {
+	return &HttpHandler{service: uc}
 }
 
-func New(service service) *chi.Mux {
+func (h *HttpHandler) Routes() *chi.Mux {
 	router := chi.NewRouter()
 
-	handler := newHandler(service)
-
-	router.Get("/list", handler.GetTextList())
-	router.Get("/list/{id}", handler.GetTextObj())
-	router.Post("/create", handler.CreateText())
-	router.Put("/update/{id}", handler.UpdateTextObj())
+	router.Get("/list", h.GetTextList)
+	router.Get("/list/{id}", h.GetTextObj)
+	router.Post("/create", h.CreateText)
+	router.Put("/update/{id}", h.UpdateTextObj)
 
 	return router
 }

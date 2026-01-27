@@ -5,7 +5,7 @@ app:
   number_of_workers: 10
 
 server:
-  address: "127.0.0.1:8080"
+  address: "0.0.0.0:8080"
   read_timeout: 15s
   write_timeout: 15s
   idle_timeout: 60s

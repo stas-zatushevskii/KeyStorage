@@ -20,37 +20,10 @@ tui/
 │    └── navigator.go
 │
 ├── pages/
-│    ├── page.go
-│    ├── auth/
-│    │    └── page.go          // 0 Login/Registration page
-│    ├── main/
-│    │    └── page.go          // 1 page where will be 2 actions: Load/Upload
-│    ├── upload/
-│    │    ├── page.go          // 2 list with possible types of data
-│    │    ├── card/
-│    │    │    └── page.go     // 2.1 page for card upload
-│    │    ├── text/
-│    │    │    └── page.go     // 2.2 page for simple text upload
-│    │    └── file/
-│    │         └── page.go     // 2.3 page for byte data upload
-│    └── load/
-│         ├── page.go          // 3 list with possible types of data
-│         ├── card/
-│         │    ├── page.go     // 3.1 page for list of cards objects
-│         │    └── object/    
-│         │          └── page.go     // 3.10 page for single object from list, where all fields are editable
-│         ├── text/
-│         │    └── page.go     // 3.2 page for list of simple text objects
-│         │    └── object/    
-│         │          └── page.go     // 3.20 page for single object from list, where all fields are editable
-│         └── file/
-│              └── page.go     // 3.3 page for list of byte bata objects
-│              └── object/    
-│                    └── page.go     // 3.30 page for single object from list, where all fields are editable
-│
-├── shared/
-├── state.go
-└── components/
+│    └─ page_name
+│         ├── view_function.go
+│         └── http_request_funciton.go
+
 </pre>
 
 ## **Navigation between pages**

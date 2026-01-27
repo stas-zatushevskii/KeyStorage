@@ -52,7 +52,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch x.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
-		case "esc":
+		case "tab":
 			return m, nav.PreviousPageCmd()
 		}
 	}
@@ -74,7 +74,7 @@ func (m Model) View() string {
 			"ID: %d\n"+
 			"Title: %s\n\n"+
 			"%s\n\n"+
-			"esc назад\n",
+			"tab назад\n",
 		m.item.ID,
 		m.item.Title,
 		m.item.Text,

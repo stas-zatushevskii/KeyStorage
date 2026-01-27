@@ -4,11 +4,13 @@ import (
 	"context"
 	account_router "server/internal/app/adapters/http-adapter/handlers/account_obj"
 	bankCard_router "server/internal/app/adapters/http-adapter/handlers/bank_card_obj"
+	file_router "server/internal/app/adapters/http-adapter/handlers/file_obj"
 	text_router "server/internal/app/adapters/http-adapter/handlers/text_obj"
 	user_router "server/internal/app/adapters/http-adapter/handlers/user"
 	"server/internal/app/adapters/http-adapter/middlewares"
 	account "server/internal/app/usecases/account_obj"
 	bankCard "server/internal/app/usecases/bank_card_obj"
+	file "server/internal/app/usecases/file_obj"
 	text "server/internal/app/usecases/text_obj"
 	"server/internal/app/usecases/user"
 	http_server "server/internal/pkg/http-server"
@@ -25,6 +27,7 @@ type Srv struct {
 	AccountObjUseCase  *account.AccountObj
 	BankCardObjUseCase *bankCard.BankCardObj
 	TextObjUseCase     *text.TextObj
+	FileObjUseCase     *file.FileObj
 }
 
 func New(svc *Srv) *HttpAdapter {
@@ -50,16 +53,20 @@ func newRouter(srv *Srv) *chi.Mux {
 	// text handler
 	textRouter := text_router.New(srv.TextObjUseCase)
 
+	// file handler
+	fileRouter := file_router.New(srv.FileObjUseCase)
+
 	// create router
 	r := chi.NewRouter()
 
 	// mount user router
-	r.Mount("/user", userRouter)
+	r.Mount("/user", userRouter.Routes(srv.UserUseCase))
 
 	// mount account object router with jwt authentification middleware
-	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/account", accountRouter)
-	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/card", bankCardRouter)
-	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/text", textRouter)
+	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/account", accountRouter.Routes())
+	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/card", bankCardRouter.Routes())
+	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/text", textRouter.Routes())
+	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/file", fileRouter.Routes())
 
 	return r
 }

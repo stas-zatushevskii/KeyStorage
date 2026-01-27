@@ -10,7 +10,7 @@ import (
 
 	errorPage "client/internal/pages/error"
 
-	get_obj "client/internal/pages/obj_text/get"
+	load_file "client/internal/pages/obj_file/load"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -18,7 +18,7 @@ import (
 type Model struct {
 	app     *app.Ctx
 	loading bool
-	items   []Text
+	items   []File
 	cursor  int
 }
 
@@ -31,12 +31,11 @@ func NewPage(app *app.Ctx) tea.Model {
 }
 
 type listLoadedMsg struct {
-	items []Text
+	items []File
 	err   error
 }
 
 func (m Model) Init() tea.Cmd {
-	// Если данные уже есть — ничего не грузим
 	if !m.loading {
 		return nil
 	}
@@ -59,12 +58,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch x.String() {
+
 		case "q", "ctrl+c":
 			return m, tea.Quit
-
-		case "r":
-			m.loading = true
-			return m, fetchListCmd(m.app)
 
 		case "up", "k":
 			if m.cursor > 0 {
@@ -83,7 +79,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				return m, nil
 			}
 			selected := m.items[m.cursor]
-			return m, nav.NextPageCmd(get_obj.NewPage(m.app, selected.ID))
+			return m, nav.NextPageCmd(load_file.NewPage(m.app, selected.ID))
+
 		case "tab":
 			return m, nav.PreviousPageCmd()
 		}
@@ -94,17 +91,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	var b strings.Builder
-	b.WriteString("Texts\n\n")
+	b.WriteString("Files\n\n")
 
 	if m.loading {
 		b.WriteString("Loading...\n\n")
-		b.WriteString("[r] refresh   [q] quit\n")
+		b.WriteString("[r] refresh   [b] back   [q] quit\n")
 		return b.String()
 	}
 
 	if len(m.items) == 0 {
 		b.WriteString("(empty)\n\n")
-		b.WriteString("[r] refresh   [q] quit\n")
+		b.WriteString("[r] refresh   [b] back   [q] quit\n")
 		return b.String()
 	}
 
@@ -113,10 +110,10 @@ func (m Model) View() string {
 		if i == m.cursor {
 			prefix = "> "
 		}
-		b.WriteString(fmt.Sprintf("%s%s\n", prefix, it.Title))
+		b.WriteString(fmt.Sprintf("%sFile name=%s\n", prefix, it.Title))
 	}
 
-	b.WriteString("\n[↑/↓] переключение   [enter] открыть   [tab] назад\n")
+	b.WriteString("\n[↑/↓] move   [enter] open   [tab] back   [q] quit\n")
 	return b.String()
 }
 
@@ -125,7 +122,7 @@ func fetchListCmd(app *app.Ctx) tea.Cmd {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		items, err := GetTextList(ctx, app)
+		items, err := GetFileList(ctx, app)
 		return listLoadedMsg{items: items, err: err}
 	}
 }

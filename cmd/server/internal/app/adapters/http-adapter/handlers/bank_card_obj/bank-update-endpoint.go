@@ -19,43 +19,42 @@ type UpdateBankCardRequest struct {
 	BankName string `json:"bank_name"`
 }
 
-func (h *httpHandler) UpdateBankCardObj() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "UpdateBankCardObj"
+func (h *HttpHandler) UpdateBankCardObj(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "UpdateBankCardObj"
 
-		var (
-			req = new(UpdateBankCardRequest)
-		)
+	var (
+		req = new(UpdateBankCardRequest)
+	)
 
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
-			return
-		}
-
-		cardID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid card id")
-			return
-		}
-
-		userID := r.Context().Value(constants.UserIDKey).(int64)
-
-		card := req.toDomain()
-		card.CardId = cardID
-		card.UserId = userID
-
-		err = h.service.UpdateBankCard(r.Context(), card)
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
-
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		codec.WriteJSON(w, http.StatusOK, "updated card successfully")
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
+		return
 	}
+
+	cardID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid card id")
+		return
+	}
+
+	userID := r.Context().Value(constants.UserIDKey).(int64)
+
+	card := req.toDomain()
+	card.CardId = cardID
+	card.UserId = userID
+
+	err = h.service.UpdateBankCard(r.Context(), card)
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
+
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
+	}
+
+	codec.WriteJSON(w, http.StatusOK, "updated card successfully")
+
 }
 
 func (u *UpdateBankCardRequest) toDomain() *domain.BankCard {

@@ -15,30 +15,29 @@ type Card struct {
 	BankName string `json:"bank_name"`
 }
 
-func (h *httpHandler) GetBankCardList() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "GetBankCardList"
-		resp := make([]Card, 0)
+func (h *HttpHandler) GetBankCardList(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "GetBankCardList"
+	resp := make([]Card, 0)
 
-		userId := r.Context().Value(constants.UserIDKey).(int64)
+	userId := r.Context().Value(constants.UserIDKey).(int64)
 
-		list, err := h.service.GetBankCardList(r.Context(), userId)
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
+	list, err := h.service.GetBankCardList(r.Context(), userId)
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
 
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		for _, item := range list {
-			c := Card{
-				CardID:   item.CardId,
-				BankName: item.Bank,
-			}
-			resp = append(resp, c)
-		}
-
-		codec.WriteJSON(w, http.StatusOK, resp)
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
 	}
+
+	for _, item := range list {
+		c := Card{
+			CardID:   item.CardId,
+			BankName: item.Bank,
+		}
+		resp = append(resp, c)
+	}
+
+	codec.WriteJSON(w, http.StatusOK, resp)
+
 }

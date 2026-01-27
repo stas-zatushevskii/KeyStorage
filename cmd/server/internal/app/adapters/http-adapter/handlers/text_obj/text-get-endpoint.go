@@ -16,32 +16,30 @@ type TextResponse struct {
 	Text  string `json:"text"`
 }
 
-func (h *httpHandler) GetTextObj() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "GetText"
+func (h *HttpHandler) GetTextObj(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "GetText"
 
-		var resp = new(TextResponse)
+	var resp = new(TextResponse)
 
-		urlId := chi.URLParam(r, "id")
+	urlId := chi.URLParam(r, "id")
 
-		id, err := strconv.ParseInt(urlId, 10, 64)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid card id")
-			return
-		}
-
-		card, err := h.service.GetText(r.Context(), id)
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
-
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		resp.Title = card.Title
-		resp.Text = card.Text
-
-		codec.WriteJSON(w, http.StatusOK, resp)
+	id, err := strconv.ParseInt(urlId, 10, 64)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusBadRequest, "invalid card id")
+		return
 	}
+
+	card, err := h.service.GetText(r.Context(), id)
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
+
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
+	}
+
+	resp.Title = card.Title
+	resp.Text = card.Text
+
+	codec.WriteJSON(w, http.StatusOK, resp)
 }

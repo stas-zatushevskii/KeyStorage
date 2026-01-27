@@ -15,30 +15,29 @@ type Text struct {
 	Title  string `json:"title"`
 }
 
-func (h *httpHandler) GetTextList() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "GetTextList"
-		resp := make([]Text, 0)
+func (h *HttpHandler) GetTextList(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "GetTextList"
+	resp := make([]Text, 0)
 
-		userId := r.Context().Value(constants.UserIDKey).(int64)
+	userId := r.Context().Value(constants.UserIDKey).(int64)
 
-		list, err := h.service.GetTextList(r.Context(), userId)
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
+	list, err := h.service.GetTextList(r.Context(), userId)
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
 
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		for _, item := range list {
-			c := Text{
-				Title:  item.Title,
-				TextID: item.TextId,
-			}
-			resp = append(resp, c)
-		}
-
-		codec.WriteJSON(w, http.StatusOK, resp)
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
 	}
+
+	for _, item := range list {
+		c := Text{
+			Title:  item.Title,
+			TextID: item.TextId,
+		}
+		resp = append(resp, c)
+	}
+
+	codec.WriteJSON(w, http.StatusOK, resp)
+
 }

@@ -18,7 +18,15 @@ db:
   max_conn_active: 20
   max_idle_conns: 5
   conn_max_lifetime: 30m
+  #dsn: "host=localhost user=postgres password=123 dbname=postgres port=5432 sslmode=disable"
   dsn: "host=db user=postgres password=postgres dbname=postgres port=5432 sslmode=disable"
+
+minio:
+  endpoint: "minio:9000"
+  accessKey: "minio"
+  secretKey: "minio12345"
+  secure: false
+  bucket_name: "user-files"
 
 jwt:
   secret: "ABOBA"
@@ -30,6 +38,7 @@ jwt:
 
 encryption:
   account_obj_key: "YOYOYOYO"
+  bank_card_obj_key: "YAYAYAYAYAYAYAYAYAYAYAYAYAYAYAYA"
 
 logger:
   level: "debug"

@@ -11,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (r *Repository) Create(ctx context.Context, f *domain.File) (domain.FileID, error) {
+func (r *Repository) Create(ctx context.Context, f *domain.File) (int64, error) {
 	if f == nil {
 		return 0, fmt.Errorf("file is nil")
 	}
@@ -32,7 +32,7 @@ func (r *Repository) Create(ctx context.Context, f *domain.File) (domain.FileID,
 	)
 
 	err := r.db.QueryRowContext(ctx, query,
-		int64(f.UserID),
+		f.UserID,
 		nullIfEmpty(f.Title),
 		f.Storage.BucketName,
 		f.Storage.ObjectKey,
@@ -54,13 +54,13 @@ func (r *Repository) Create(ctx context.Context, f *domain.File) (domain.FileID,
 		return 0, fmt.Errorf("insert file_data: %w", err)
 	}
 
-	f.ID = domain.FileID(id)
+	f.ID = id
 	f.CreatedAt = createdAt
 
 	return f.ID, nil
 }
 
-func (r *Repository) GetByID(ctx context.Context, id domain.FileID) (*domain.File, error) {
+func (r *Repository) GetByID(ctx context.Context, id int64) (*domain.File, error) {
 	if id <= 0 {
 		return nil, domain.ErrInvalidFileID
 	}
@@ -75,7 +75,7 @@ func (r *Repository) GetByID(ctx context.Context, id domain.FileID) (*domain.Fil
 		WHERE id = $1
 	`
 
-	row := r.db.QueryRowContext(ctx, q, int64(id))
+	row := r.db.QueryRowContext(ctx, q, id)
 
 	f, err := scanFile(row)
 	if err != nil {
@@ -88,18 +88,9 @@ func (r *Repository) GetByID(ctx context.Context, id domain.FileID) (*domain.Fil
 	return f, nil
 }
 
-func (r *Repository) ListByUserID(ctx context.Context, userID domain.UserID, limit, offset int) ([]*domain.File, error) {
+func (r *Repository) ListByUserID(ctx context.Context, userID int64) ([]*domain.File, error) {
 	if userID <= 0 {
 		return nil, domain.ErrInvalidUserID
-	}
-	if limit <= 0 {
-		limit = 50
-	}
-	if limit > 500 {
-		limit = 500
-	}
-	if offset < 0 {
-		offset = 0
 	}
 
 	query := `
@@ -111,10 +102,9 @@ func (r *Repository) ListByUserID(ctx context.Context, userID domain.UserID, lim
 		FROM file_data
 		WHERE user_id = $1
 		ORDER BY created_at DESC, id DESC
-		LIMIT $2 OFFSET $3
 	`
 
-	rows, err := r.db.QueryContext(ctx, query, int64(userID), limit, offset)
+	rows, err := r.db.QueryContext(ctx, query, userID)
 	if err != nil {
 		return nil, fmt.Errorf("list file_data by user_id=%d: %w", userID, err)
 	}
@@ -136,7 +126,7 @@ func (r *Repository) ListByUserID(ctx context.Context, userID domain.UserID, lim
 	return out, nil
 }
 
-func (r *Repository) Delete(ctx context.Context, id domain.FileID) error {
+func (r *Repository) Delete(ctx context.Context, id int64) error {
 	if id <= 0 {
 		return domain.ErrInvalidFileID
 	}
@@ -195,8 +185,8 @@ func scanFile(s scanner) (*domain.File, error) {
 	}
 
 	f := &domain.File{
-		ID:          domain.FileID(id),
-		UserID:      domain.UserID(userID),
+		ID:          id,
+		UserID:      userID,
 		Title:       nullStringToString(title),
 		Storage:     ref,
 		SizeBytes:   sizeBytes,

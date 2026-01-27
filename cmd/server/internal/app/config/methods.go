@@ -87,6 +87,14 @@ func (cfg *AppConfig) GetMinioUseSSL() bool {
 	return cfg.Minio.MinioUseSSL
 }
 
+func (cfg *AppConfig) GetMinioAccessKey() string {
+	return cfg.Minio.MinioAccessKey
+}
+
+func (cfg *AppConfig) GetMinioSecretKey() string {
+	return cfg.Minio.MinioSecretKey
+}
+
 // ---- Encryption ----
 
 func (cfg *AppConfig) GetAccountObjEncryptionKey() string {

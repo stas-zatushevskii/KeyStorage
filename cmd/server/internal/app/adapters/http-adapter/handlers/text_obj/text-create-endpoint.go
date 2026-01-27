@@ -21,40 +21,39 @@ type CreateTextResponse struct {
 	TextID int64 `json:"text_id"`
 }
 
-func (h *httpHandler) CreateText() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		const HandlerName = "CreateText"
+func (h *HttpHandler) CreateText(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "CreateText"
 
-		var (
-			req  = new(CreateTextRequest)
-			resp = new(CreateTextResponse)
-		)
+	var (
+		req  = new(CreateTextRequest)
+		resp = new(CreateTextResponse)
+	)
 
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
-			return
-		}
-
-		userID := r.Context().Value(constants.UserIDKey).(int64)
-
-		card := req.toDomain()
-		card.UserId = userID
-
-		id, err := h.service.CreateNewTextObj(r.Context(), card)
-
-		if err != nil {
-			logger.Log.Error(HandlerName, zap.Error(err))
-
-			s, m := errorMapper.Process(err)
-			codec.WriteErrorJSON(w, s, m)
-			return
-		}
-
-		resp.TextID = id
-
-		codec.WriteJSON(w, http.StatusOK, resp)
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
+		return
 	}
+
+	userID := r.Context().Value(constants.UserIDKey).(int64)
+
+	card := req.toDomain()
+	card.UserId = userID
+
+	id, err := h.service.CreateNewTextObj(r.Context(), card)
+
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
+
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
+	}
+
+	resp.TextID = id
+
+	codec.WriteJSON(w, http.StatusOK, resp)
+
 }
 
 func (req CreateTextRequest) toDomain() *domain.Text {

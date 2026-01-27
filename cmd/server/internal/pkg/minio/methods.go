@@ -40,6 +40,30 @@ func (c *Client) DeleteObject(ctx context.Context, bucket, key string) error {
 	if err := c.mc.RemoveObject(ctx, bucket, key, opts); err != nil {
 		return fmt.Errorf("minio remove object bucket=%s key=%s: %w", bucket, key, err)
 	}
-
 	return nil
+}
+
+func (s *Client) GetObjectReader(
+	ctx context.Context,
+	bucket string,
+	objectKey string,
+) (io.ReadCloser, error) {
+
+	obj, err := s.mc.GetObject(
+		ctx,
+		bucket,
+		objectKey,
+		minio.GetObjectOptions{},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = obj.Stat()
+	if err != nil {
+		obj.Close()
+		return nil, err
+	}
+
+	return obj, nil
 }
