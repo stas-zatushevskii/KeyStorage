@@ -42,11 +42,15 @@ func (h *HttpHandler) UpdateAccountObj(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := r.Context().Value(constants.UserIDKey).(int64)
+	userId, ok := r.Context().Value(constants.UserIDKey).(int64)
+	if !ok {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
+		return
+	}
 
 	account := req.toDomain()
 	account.AccountId = accountID
-	account.UserId = userID
+	account.UserId = userId
 
 	err = h.service.UpdateAccount(r.Context(), account)
 	if err != nil {

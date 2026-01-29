@@ -1,4 +1,2 @@
-/.idea/.gitignore
-/.idea/KeyStorage.iml
-/.idea/modules.xml
-/.idea/vcs.xml
+/.idea
+/logs

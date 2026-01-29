@@ -32,7 +32,7 @@ func New() (*App, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to database: %v", err)
 	}
-	if err = postgres.SetupDatabase(database); err != nil {
+	if err = postgres.RunMigrations(database); err != nil {
 		return nil, fmt.Errorf("failed to setup database: %v", err)
 	}
 
@@ -56,8 +56,6 @@ func New() (*App, error) {
 		TextObjUseCase:     textUsecase.New(textRepository.New(database)),
 		FileObjUseCase:     fileUsecase.New(fileRepository.New(database), fileStorage),
 	})
-
-	// todo add grpc
 
 	return &App{
 		HttpAdapter:     httpAdapter,

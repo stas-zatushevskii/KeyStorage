@@ -2,7 +2,7 @@ package text_obj
 
 import (
 	"context"
-	"fmt"
+
 	domain "server/internal/app/domain/text_obj"
 )
 
@@ -22,63 +22,79 @@ func New(repo Repository) *TextObj {
 }
 
 func (b *TextObj) GetText(ctx context.Context, textId int64) (*domain.Text, error) {
-	account, err := b.repo.GetByID(ctx, textId)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get text: %w", err)
+	if textId <= 0 {
+		return nil, domain.ErrInvalidTextID
 	}
-	return account, nil
+
+	item, err := b.repo.GetByID(ctx, textId)
+	if err != nil {
+		return nil, domain.ErrTextNotFound
+	}
+
+	return item, nil
 }
 
 func (b *TextObj) GetTextList(ctx context.Context, userId int64) ([]*domain.Text, error) {
+	if userId <= 0 {
+		return nil, domain.ErrInvalidUserID
+	}
+
 	list, err := b.repo.GetByUserID(ctx, userId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get text list: %w", err)
+		return nil, domain.ErrTextNotFound
 	}
+
 	if len(list) == 0 {
 		return nil, domain.ErrEmptyTextsList
 	}
+
 	return list, nil
 }
 
 func (b *TextObj) CreateNewTextObj(ctx context.Context, text *domain.Text) (int64, error) {
+	if text == nil {
+		return 0, domain.ErrFailedCreateText
+	}
 
-	if text.UserId == 0 {
-		return 0, fmt.Errorf("user id is zero")
+	if text.UserId <= 0 {
+		return 0, domain.ErrInvalidUserID
 	}
 
 	if text.Title == "" {
-		return 0, fmt.Errorf("title is zero")
+		return 0, domain.ErrEmptyTitle
 	}
 
 	if text.Text == "" {
-		return 0, fmt.Errorf("text is zero")
+		return 0, domain.ErrEmptyText
 	}
 
 	id, err := b.repo.Create(ctx, text)
 	if err != nil {
-		return 0, fmt.Errorf("failed to create text: %w", err)
+		return 0, domain.ErrFailedCreateText
 	}
 
 	return id, nil
 }
 
 func (b *TextObj) UpdateText(ctx context.Context, text *domain.Text) error {
+	if text == nil {
+		return domain.ErrFailedUpdateText
+	}
 
-	if text.UserId == 0 {
-		return fmt.Errorf("user id is zero")
+	if text.UserId <= 0 {
+		return domain.ErrInvalidUserID
 	}
 
 	if text.Title == "" {
-		return fmt.Errorf("title is zero")
+		return domain.ErrEmptyTitle
 	}
 
 	if text.Text == "" {
-		return fmt.Errorf("text is zero")
+		return domain.ErrEmptyText
 	}
 
-	err := b.repo.Update(ctx, text)
-	if err != nil {
-		return fmt.Errorf("failed to create text: %w", err)
+	if err := b.repo.Update(ctx, text); err != nil {
+		return domain.ErrFailedUpdateText
 	}
 
 	return nil

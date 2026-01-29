@@ -3,7 +3,6 @@ package bank_card_obj
 import (
 	"context"
 	domain "server/internal/app/domain/bank_card_obj"
-	usecase "server/internal/app/usecases/file_obj"
 
 	"github.com/go-chi/chi/v5"
 )

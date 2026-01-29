@@ -8,6 +8,9 @@ import (
 	"server/internal/app/config"
 	domain "server/internal/app/domain/bank_card_obj"
 	"server/internal/pkg/encryption/aes"
+	"server/internal/pkg/logger"
+
+	"go.uber.org/zap"
 )
 
 func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.BankCard, error) {
@@ -22,6 +25,11 @@ func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.B
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			logger.Log.Error("rows.Close() failed", zap.Error(err))
+		}
+	}()
 
 	for rows.Next() {
 		obj := new(Card)
@@ -53,8 +61,9 @@ func (u *Repository) GetByID(ctx context.Context, cardId int64) (*domain.BankCar
 
 	if err := u.db.QueryRowContext(ctx, query, cardId).Scan(&obj.ID, &obj.UserId, &obj.Bank, &obj.PID); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, domain.ErrBankCardInformationNotFound
+			return nil, domain.ErrBankCardNotFound
 		}
+		return nil, err
 	}
 
 	decrypted, err := aes.DecryptAES(obj.PID, []byte(config.App.GetBankCardObjEncryptionKey()))

@@ -36,7 +36,11 @@ func (h *HttpHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := r.Context().Value(constants.UserIDKey).(int64)
+	userID, ok := r.Context().Value(constants.UserIDKey).(int64)
+	if !ok {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
+		return
+	}
 
 	account := req.toDomain()
 	account.UserId = userID

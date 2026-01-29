@@ -35,10 +35,14 @@ func (h *HttpHandler) CreateText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := r.Context().Value(constants.UserIDKey).(int64)
+	userId, ok := r.Context().Value(constants.UserIDKey).(int64)
+	if !ok {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
+		return
+	}
 
 	card := req.toDomain()
-	card.UserId = userID
+	card.UserId = userId
 
 	id, err := h.service.CreateNewTextObj(r.Context(), card)
 

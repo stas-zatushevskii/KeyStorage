@@ -5,10 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"server/internal/pkg/logger"
 
 	domain "server/internal/app/domain/file_obj"
 
 	"github.com/jackc/pgx/v5/pgconn"
+	"go.uber.org/zap"
 )
 
 func (r *Repository) Create(ctx context.Context, f *domain.File) (int64, error) {
@@ -108,7 +110,11 @@ func (r *Repository) ListByUserID(ctx context.Context, userID int64) ([]*domain.
 	if err != nil {
 		return nil, fmt.Errorf("list file_data by user_id=%d: %w", userID, err)
 	}
-	defer rows.Close()
+	defer func() {
+		if err := rows.Close(); err != nil {
+			logger.Log.Error("rows.Close() failed", zap.Error(err))
+		}
+	}()
 
 	var out []*domain.File
 	for rows.Next() {

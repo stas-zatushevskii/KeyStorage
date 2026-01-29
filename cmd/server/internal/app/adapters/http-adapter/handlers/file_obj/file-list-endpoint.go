@@ -14,7 +14,10 @@ type fileResponse struct {
 }
 
 func (h *FileHandler) ListByUserID(w http.ResponseWriter, r *http.Request) {
-	userId := r.Context().Value(constants.UserIDKey).(int64)
+	userId, ok := r.Context().Value(constants.UserIDKey).(int64)
+	if !ok {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
+	}
 
 	list, err := h.uc.GetFileList(r.Context(), userId)
 	if err != nil {

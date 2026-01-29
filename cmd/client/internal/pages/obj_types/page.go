@@ -70,7 +70,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			obj := m.items[m.cursor]
 
-			// В зависимости от режима — уходим либо на create, либо на list
 			switch m.mode {
 			case constants.ModeCreate:
 				switch obj {
@@ -85,7 +84,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					// return m, nav.NextPageCmd(create_bank.NewPage(m.app))
 					return m, nav.NextPageCmd(card_create.NewPage(m.app))
 				default:
-					panic("unhandled default case")
+					return m, nil
 				}
 
 			case constants.ModeList:
@@ -102,13 +101,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					// return m, nav.NextPageCmd(bank_list.NewPage(m.app))
 					return m, nav.NextPageCmd(card_list.NewPage(m.app))
 				default:
-					panic("unhandled default case")
+					return m, nil
 				}
 			default:
-				panic("unhandled default case")
+				return m, nil
 			}
-
-			return m, nil
 		}
 	}
 

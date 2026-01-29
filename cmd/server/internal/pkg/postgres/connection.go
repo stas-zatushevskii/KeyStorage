@@ -9,7 +9,6 @@ import (
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-	"go.uber.org/zap"
 
 	// -- only for debug
 	"github.com/rs/zerolog"
@@ -39,7 +38,6 @@ func NewConnection() (*sql.DB, error) {
 		db = debugModeConnection(dsn, db)
 	}
 
-	logger.Log.Info("[Db] set database connection", zap.Bool("debug", config.App.GetDebugMode()))
 	return db, nil
 }
 

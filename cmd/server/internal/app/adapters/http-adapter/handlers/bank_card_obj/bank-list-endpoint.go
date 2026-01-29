@@ -19,7 +19,11 @@ func (h *HttpHandler) GetBankCardList(w http.ResponseWriter, r *http.Request) {
 	const HandlerName = "GetBankCardList"
 	resp := make([]Card, 0)
 
-	userId := r.Context().Value(constants.UserIDKey).(int64)
+	userId, ok := r.Context().Value(constants.UserIDKey).(int64)
+	if !ok {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
+		return
+	}
 
 	list, err := h.service.GetBankCardList(r.Context(), userId)
 	if err != nil {

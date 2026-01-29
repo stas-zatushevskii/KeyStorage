@@ -35,10 +35,14 @@ func (h *HttpHandler) CreateBankCard(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := r.Context().Value(constants.UserIDKey).(int64)
+	userId, ok := r.Context().Value(constants.UserIDKey).(int64)
+	if !ok {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
+		return
+	}
 
 	bank := req.toDomain()
-	bank.UserId = userID
+	bank.UserId = userId
 
 	id, err := h.service.CreateNewBankCardObj(r.Context(), bank)
 

@@ -5,6 +5,9 @@ import (
 	"database/sql"
 	"errors"
 	domain "server/internal/app/domain/text_obj"
+	"server/internal/pkg/logger"
+
+	"go.uber.org/zap"
 )
 
 func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.Text, error) {
@@ -19,6 +22,11 @@ func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.T
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			logger.Log.Error("rows.Close() failed", zap.Error(err))
+		}
+	}()
 
 	for rows.Next() {
 		obj := new(Text)
@@ -56,18 +64,18 @@ func (u *Repository) Create(ctx context.Context, card *domain.Text) (int64, erro
 		INSERT INTO text_data (user_id, title, text)
 		VALUES ($1, $2, $3)
 		RETURNING id`
-	
+
 	var id sql.NullInt64
 
 	if err := u.db.QueryRowContext(ctx, query, card.UserId, card.Title, card.Text).Scan(&id); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return 0, domain.ErrFailedCreateTextObject
+			return 0, domain.ErrFailedCreateText
 		}
 		return 0, err
 	}
 
 	if !id.Valid {
-		return 0, domain.ErrFailedCreateTextObject
+		return 0, domain.ErrFailedCreateText
 	}
 
 	return id.Int64, nil

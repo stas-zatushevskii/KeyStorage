@@ -8,6 +8,9 @@ import (
 	"server/internal/app/config"
 	domain "server/internal/app/domain/account_obj"
 	"server/internal/pkg/encryption/aes"
+	"server/internal/pkg/logger"
+
+	"go.uber.org/zap"
 )
 
 func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.Account, error) {
@@ -22,6 +25,11 @@ func (u *Repository) GetByUserID(ctx context.Context, userId int64) ([]*domain.A
 	if err != nil {
 		return nil, err
 	}
+	defer func() {
+		if err := rows.Close(); err != nil {
+			logger.Log.Error("rows.Close() failed", zap.Error(err))
+		}
+	}()
 
 	for rows.Next() {
 		obj := new(Account)

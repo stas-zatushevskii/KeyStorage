@@ -103,3 +103,13 @@ func (cfg *AppConfig) GetAccountObjEncryptionKey() string {
 func (cfg *AppConfig) GetBankCardObjEncryptionKey() string {
 	return cfg.Encryption.BankCardObjKey
 }
+
+// ---- File Types
+
+func (cfg *AppConfig) AllowedMimeSet() map[string]struct{} {
+	m := make(map[string]struct{}, len(cfg.Uploads.AllowedMimeTypes))
+	for _, t := range cfg.Uploads.AllowedMimeTypes {
+		m[t] = struct{}{}
+	}
+	return m
+}

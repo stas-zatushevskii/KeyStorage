@@ -22,13 +22,13 @@ func (h *FileHandler) DownloadByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, ok := r.Context().Value(constants.UserIDKey).(int64)
+	userId, ok := r.Context().Value(constants.UserIDKey).(int64)
 	if !ok {
-		codec.WriteErrorJSON(w, http.StatusUnauthorized, "unauthorized")
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
 		return
 	}
 
-	meta, reader, err := h.uc.GetFileStream(r.Context(), userID, id)
+	meta, reader, err := h.uc.GetFileStream(r.Context(), userId, id)
 	if err != nil {
 		switch {
 		case errors.Is(err, domain.ErrFileNotFound):
@@ -58,7 +58,7 @@ func (h *FileHandler) DownloadByID(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 
-	logger.Log.Info(fmt.Sprintf("filename: %s fileID %d userID %d", filename, id, userID))
+	logger.Log.Info(fmt.Sprintf("filename: %s fileID %d userID %d", filename, id, userId))
 	if _, err := io.Copy(w, reader); err != nil {
 		logger.Log.Error(err.Error())
 		return

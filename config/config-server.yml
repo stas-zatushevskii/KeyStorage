@@ -42,3 +42,10 @@ encryption:
 
 logger:
   level: "debug"
+
+uploads:
+  allowed_mime_types:
+    - image/png
+    - image/jpeg
+    - application/pdf
+    - text/plain

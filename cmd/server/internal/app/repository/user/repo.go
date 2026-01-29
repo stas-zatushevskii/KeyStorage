@@ -17,7 +17,7 @@ func (u *Repository) GetById(ctx context.Context, id int64) (*user.User, error) 
 		WHERE id = $1`
 
 	newUser := user.NewUser()
-	if err := u.db.QueryRowContext(ctx, query, id).Scan(&newUser.ID, &newUser.Password); err != nil {
+	if err := u.db.QueryRowContext(ctx, query, id).Scan(&newUser.ID, &newUser.Username, &newUser.Password); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, user.ErrUserNotFound
 		}
@@ -51,14 +51,13 @@ func (u *Repository) CreateNewUser(ctx context.Context, newUser *user.User) (int
 	var id int64
 	err := u.db.QueryRowContext(ctx, query, newUser.Username, newUser.Password).Scan(&id)
 	if err != nil {
-		return 0, err
-	}
-
-	var pgErr *pgconn.PgError
-	if errors.As(err, &pgErr) {
-		if pgErr.Code == "23505" { // unique_violation
-			return 0, user.ErrUsernameAlreadyExists
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) {
+			if pgErr.Code == "23505" { // unique_violation
+				return 0, user.ErrUsernameAlreadyExists
+			}
 		}
+		return 0, err
 	}
 	return id, nil
 }

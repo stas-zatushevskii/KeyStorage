@@ -1,18 +1,26 @@
 package file_obj
 
 import (
+	"context"
+	"io"
 	"net/http"
+	domain "server/internal/app/domain/file_obj"
 
 	"github.com/go-chi/chi/v5"
-
-	usecase "server/internal/app/usecases/file_obj"
 )
 
-type FileHandler struct {
-	uc *usecase.FileObj
+type Service interface {
+	GetFileStream(ctx context.Context, userID, fileID int64) (*domain.File, io.ReadCloser, error)
+	GetFileList(ctx context.Context, userID int64) ([]*domain.File, error)
+	UploadAndCreate(ctx context.Context, file *domain.File, data []byte) (int64, error)
+	GetByID(ctx context.Context, fileID int64) (*domain.File, error)
 }
 
-func New(uc *usecase.FileObj) *FileHandler {
+type FileHandler struct {
+	uc Service
+}
+
+func New(uc Service) *FileHandler {
 	return &FileHandler{uc: uc}
 }
 

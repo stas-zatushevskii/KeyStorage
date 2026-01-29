@@ -2,7 +2,7 @@ package bank_card_obj
 
 import (
 	"context"
-	"fmt"
+
 	domain "server/internal/app/domain/bank_card_obj"
 )
 
@@ -22,63 +22,79 @@ func New(repo Repository) *BankCardObj {
 }
 
 func (b *BankCardObj) GetBankCard(ctx context.Context, cardId int64) (*domain.BankCard, error) {
-	account, err := b.repo.GetByID(ctx, cardId)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get card: %w", err)
+	if cardId <= 0 {
+		return nil, domain.ErrInvalidCardID
 	}
-	return account, nil
+
+	card, err := b.repo.GetByID(ctx, cardId)
+	if err != nil {
+		return nil, domain.ErrBankCardNotFound
+	}
+
+	return card, nil
 }
 
 func (b *BankCardObj) GetBankCardList(ctx context.Context, userId int64) ([]*domain.BankCard, error) {
+	if userId <= 0 {
+		return nil, domain.ErrInvalidUserID
+	}
+
 	list, err := b.repo.GetByUserID(ctx, userId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get card list: %w", err)
+		return nil, domain.ErrBankCardNotFound
 	}
+
 	if len(list) == 0 {
-		return nil, domain.ErrEmptyBankCardsList
+		return nil, domain.ErrBankCardNotFound
 	}
+
 	return list, nil
 }
 
 func (b *BankCardObj) CreateNewBankCardObj(ctx context.Context, card *domain.BankCard) (int64, error) {
+	if card == nil {
+		return 0, domain.ErrFaildeCreateBankCardObject
+	}
 
-	if card.UserId == 0 {
-		return 0, fmt.Errorf("user id is zero")
+	if card.UserId <= 0 {
+		return 0, domain.ErrInvalidUserID
 	}
 
 	if card.Bank == "" {
-		return 0, fmt.Errorf("service name is zero")
+		return 0, domain.ErrEmptyBankName
 	}
 
 	if card.Pid == "" {
-		return 0, fmt.Errorf("pid is zero")
+		return 0, domain.ErrEmptyPID
 	}
 
 	id, err := b.repo.Create(ctx, card)
 	if err != nil {
-		return 0, fmt.Errorf("failed to create card: %w", err)
+		return 0, domain.ErrFaildeCreateBankCardObject
 	}
 
 	return id, nil
 }
 
 func (b *BankCardObj) UpdateBankCard(ctx context.Context, card *domain.BankCard) error {
+	if card == nil {
+		return domain.ErrFailedUpdateBankCard
+	}
 
-	if card.UserId == 0 {
-		return fmt.Errorf("user id is zero")
+	if card.UserId <= 0 {
+		return domain.ErrInvalidUserID
 	}
 
 	if card.Bank == "" {
-		return fmt.Errorf("service name is zero")
+		return domain.ErrEmptyBankName
 	}
 
 	if card.Pid == "" {
-		return fmt.Errorf("pid is zero")
+		return domain.ErrEmptyPID
 	}
 
-	err := b.repo.Update(ctx, card)
-	if err != nil {
-		return fmt.Errorf("failed to create card: %w", err)
+	if err := b.repo.Update(ctx, card); err != nil {
+		return domain.ErrFailedUpdateBankCard
 	}
 
 	return nil

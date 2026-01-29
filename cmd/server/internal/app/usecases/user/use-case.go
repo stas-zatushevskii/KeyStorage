@@ -32,7 +32,12 @@ func (u *User) RegisterNewUser(ctx context.Context, username, password string) (
 	user := domain.NewUser()
 
 	// hash user password
-	user.Password = hasher.HashString(password)
+	hashedPassword, err := hasher.HashString(password)
+	if err != nil {
+		return nil, err
+	}
+
+	user.Password = hashedPassword
 	user.Username = username
 
 	// create new User in database
@@ -41,6 +46,7 @@ func (u *User) RegisterNewUser(ctx context.Context, username, password string) (
 		if !errors.Is(err, domain.ErrUsernameAlreadyExists) {
 			return nil, fmt.Errorf("failed to create new user: %w", err)
 		}
+		return nil, fmt.Errorf("failed to create new user: %w", err)
 	}
 
 	// create tokens
@@ -71,7 +77,7 @@ func (u *User) Login(ctx context.Context, username, password string) (*token.Tok
 func (u *User) Authenticate(t string) (int64, error) {
 	jwt, err := token.VerifyJWT(t)
 	if err != nil {
-		return 0, err // fixme: require error type check
+		return 0, domain.ErrTokenNotValid
 	}
 	return jwt.UserID, nil
 }
@@ -100,10 +106,13 @@ func (u *User) RefreshJWTToken(ctx context.Context, jwt, refreshToken string) (*
 	}
 
 	// verify hashed tokens
-	if hasher.HashString(tokens.RefreshToken) != refreshToken {
+	ok, err := hasher.VerifyString(refreshToken, tokens.RefreshToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to verify refresh token: %w", err)
+	}
+	if !ok {
 		return nil, domain.ErrInvalidRefreshToken
 	}
-
 	return u.updateTokens(ctx, claim.UserID)
 }
 
@@ -125,8 +134,11 @@ func (u *User) createTokens(ctx context.Context, userID int64) (*token.Tokens, e
 	t.AddRefreshToken(refreshToken)
 
 	// hash refresh token
-	nonHashedRefreshToken := t.RefreshToken
-	t.RefreshToken = hasher.HashString(t.RefreshToken)
+	hashedRefreshToken, err := hasher.HashString(refreshToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to hash refresh token: %w", err)
+	}
+	t.RefreshToken = hashedRefreshToken
 
 	// save t in database
 	err = u.repo.AddTokens(ctx, userID, t)
@@ -134,7 +146,7 @@ func (u *User) createTokens(ctx context.Context, userID int64) (*token.Tokens, e
 		return nil, fmt.Errorf("failed to add t: %w", err)
 	}
 
-	t.RefreshToken = nonHashedRefreshToken
+	t.RefreshToken = refreshToken
 	return t, nil
 }
 
@@ -156,8 +168,11 @@ func (u *User) updateTokens(ctx context.Context, userID int64) (*token.Tokens, e
 	tokens.AddRefreshToken(refreshToken)
 
 	// hash refresh token
-	nonHashedRefreshToken := tokens.RefreshToken
-	tokens.RefreshToken = hasher.HashString(tokens.RefreshToken)
+	hashedRefreshToken, err := hasher.HashString(refreshToken)
+	if err != nil {
+		return nil, fmt.Errorf("failed to hash refresh token: %w", err)
+	}
+	tokens.RefreshToken = hashedRefreshToken
 
 	// save tokens in database
 	err = u.repo.UpdateTokens(ctx, userID, tokens)
@@ -165,6 +180,6 @@ func (u *User) updateTokens(ctx context.Context, userID int64) (*token.Tokens, e
 		return nil, fmt.Errorf("failed to update  tokens: %w", err)
 	}
 
-	tokens.RefreshToken = nonHashedRefreshToken
+	tokens.RefreshToken = refreshToken
 	return tokens, nil
 }

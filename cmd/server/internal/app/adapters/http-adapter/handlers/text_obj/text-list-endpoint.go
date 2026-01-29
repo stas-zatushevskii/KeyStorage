@@ -19,7 +19,10 @@ func (h *HttpHandler) GetTextList(w http.ResponseWriter, r *http.Request) {
 	const HandlerName = "GetTextList"
 	resp := make([]Text, 0)
 
-	userId := r.Context().Value(constants.UserIDKey).(int64)
+	userId, ok := r.Context().Value(constants.UserIDKey).(int64)
+	if !ok {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
+	}
 
 	list, err := h.service.GetTextList(r.Context(), userId)
 	if err != nil {

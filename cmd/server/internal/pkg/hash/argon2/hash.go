@@ -5,7 +5,6 @@ import (
 	"crypto/subtle"
 	"encoding/base64"
 	"fmt"
-	"server/internal/pkg/logger"
 	"strings"
 
 	"golang.org/x/crypto/argon2"
@@ -29,7 +28,7 @@ func DefaultParams() *Params {
 	}
 }
 
-func HashString(password string) string {
+func HashString(password string) (string, error) {
 	return generateFromString(password, DefaultParams())
 }
 
@@ -37,18 +36,21 @@ func VerifyString(password, hashedPassword string) (bool, error) {
 	return compareStringAndHash(password, hashedPassword)
 }
 
-func generateRandom(size uint32) []byte {
+func generateRandom(size uint32) ([]byte, error) {
 	// генерируем случайную последовательность байт
 	b := make([]byte, size)
 	_, err := rand.Read(b)
 	if err != nil {
-		logger.Log.Fatal(err.Error())
+		return nil, err
 	}
-	return b
+	return b, nil
 }
 
-func generateFromString(data string, params *Params) string {
-	salt := generateRandom(params.saltLength)
+func generateFromString(data string, params *Params) (string, error) {
+	salt, err := generateRandom(params.saltLength)
+	if err != nil {
+		return "", err
+	}
 	hash := argon2.IDKey([]byte(data), salt, params.iterations, params.memory, params.parallelism, params.keyLength)
 
 	// Base64 encode the salt and hashed password.
@@ -58,7 +60,7 @@ func generateFromString(data string, params *Params) string {
 	// Return a string using the standard encoded hash representation.
 	encodedHash := fmt.Sprintf("$argon2id$v=%d$m=%d,t=%d,p=%d$%s$%s", argon2.Version, params.memory, params.iterations, params.parallelism, b64Salt, b64Hash)
 
-	return encodedHash
+	return encodedHash, nil
 
 }
 

@@ -10,6 +10,7 @@ type AppConfig struct {
 	JWT        JWT        `yaml:"jwt"`
 	Minio      Minio      `yaml:"minio"`
 	Encryption Encryption `yaml:"encryption"`
+	Uploads    Uploads    `yaml:"uploads"`
 }
 
 type Encryption struct {
@@ -67,4 +68,8 @@ type Minio struct {
 	MinioUseSSL       bool   `yaml:"minio_use_ssl"`
 	MinioAccessKey    string `yaml:"accessKey"`
 	MinioSecretKey    string `yaml:"secretKey"`
+}
+
+type Uploads struct {
+	AllowedMimeTypes []string `yaml:"allowed_mime_types"`
 }

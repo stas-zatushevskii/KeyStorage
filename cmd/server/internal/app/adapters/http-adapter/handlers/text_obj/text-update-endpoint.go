@@ -32,7 +32,10 @@ func (h *HttpHandler) UpdateTextObj(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID := r.Context().Value(constants.UserIDKey).(int64)
+	userId, ok := r.Context().Value(constants.UserIDKey).(int64)
+	if !ok {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
+	}
 
 	textID, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
 	if err != nil {
@@ -41,7 +44,7 @@ func (h *HttpHandler) UpdateTextObj(w http.ResponseWriter, r *http.Request) {
 	}
 
 	text := req.toDomain()
-	text.UserId = userID
+	text.UserId = userId
 	text.TextId = textID
 
 	err = h.service.UpdateText(r.Context(), text)
