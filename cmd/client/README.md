@@ -1,6 +1,6 @@
 
 
-## **Client architecture:**
+## **MinioAdapter architecture:**
 * TUI + BubbleTea = state machine + message passing
 * For each page - create new model
 * Navigation - separate logic layer

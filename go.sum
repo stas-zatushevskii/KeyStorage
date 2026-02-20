@@ -21,7 +21,7 @@ github.com/simukti/sqldb-logger v0.0.0-20230108155151-646c1a075551 h1:+EXKKt7RC4
 github.com/simukti/sqldb-logger v0.0.0-20230108155151-646c1a075551/go.mod h1:ztTX0ctjRZ1wn9OXrzhonvNmv43yjFUXJYJR95JQAJE=
 github.com/simukti/sqldb-logger/logadapter/zerologadapter v0.0.0-20230108155151-646c1a075551 h1:bczJjKEboy7QOlt2Is8oDVHOANiPo+WZ1BQ7sXE7aTw=
 github.com/simukti/sqldb-logger/logadapter/zerologadapter v0.0.0-20230108155151-646c1a075551/go.mod h1:B5eKZqvueyvIu/v97d/JBqYKgchoWWoks6cceAtf56g=
-github.com/stretchr/objx v0.5.0 h1:1zr/of2m5FGMsad5YfcqgdqdWrIhu+EBEJRhR1U7z/c=
+github.com/stretchr/objx v0.5.0 h1:1zr/of2m5FGMsad5YfcqgdqdWrIhu+EBEJRhR1U7z/mc=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=
 github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
 github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
