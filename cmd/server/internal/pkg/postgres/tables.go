@@ -1,15 +1,13 @@
 package db
 
 import (
-	"database/sql"
-
 	"github.com/pressly/goose/v3"
 )
 
-func RunMigrations(db *sql.DB) error {
+func (db *DatabaseAdapter) RunMigrations() error {
 	goose.SetBaseFS(nil)
 	if err := goose.SetDialect("postgres"); err != nil {
 		return err
 	}
-	return goose.Up(db, "./migrations")
+	return goose.Up(db.DB, "./migrations")
 }

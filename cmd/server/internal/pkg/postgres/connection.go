@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"os"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"golang.org/x/sync/errgroup"
 
 	// -- only for debug
 	"github.com/rs/zerolog"
@@ -16,7 +18,11 @@ import (
 	"github.com/simukti/sqldb-logger/logadapter/zerologadapter"
 )
 
-func NewConnection() (*sql.DB, error) {
+type DatabaseAdapter struct {
+	DB *sql.DB
+}
+
+func New() (*DatabaseAdapter, error) {
 
 	dsn := config.App.GetDSN()
 
@@ -38,7 +44,39 @@ func NewConnection() (*sql.DB, error) {
 		db = debugModeConnection(dsn, db)
 	}
 
-	return db, nil
+	return &DatabaseAdapter{DB: db}, nil
+}
+
+func (db *DatabaseAdapter) Start(ctx context.Context) error {
+	g, ctx := errgroup.WithContext(ctx)
+
+	g.Go(func() error {
+
+		err := db.RunMigrations()
+		if err != nil {
+			return fmt.Errorf("failed to setup database: %v", err)
+		}
+
+		return nil
+	})
+
+	g.Go(func() error {
+		<-ctx.Done()
+
+		err := db.DB.Close()
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	err := g.Wait()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func debugModeConnection(dsn string, db *sql.DB) *sql.DB {
