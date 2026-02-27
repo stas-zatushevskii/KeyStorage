@@ -5,16 +5,16 @@ import (
 	"fmt"
 	"server/internal/app/adapters/primary/http-adapter"
 	"server/internal/app/adapters/primary/os-signal-adapter"
-	fileMinioRepository "server/internal/app/adapters/secondary/repositories/minio/file_obj"
-	accountPostgresRepository "server/internal/app/adapters/secondary/repositories/postgrtes/accout_obj"
-	bankCardPostgresRepository "server/internal/app/adapters/secondary/repositories/postgrtes/bank_card_obj"
-	filePostgresRepository "server/internal/app/adapters/secondary/repositories/postgrtes/file_obj"
-	textPostgresRepository "server/internal/app/adapters/secondary/repositories/postgrtes/text_obj"
+	fileMinioRepository "server/internal/app/adapters/secondary/repositories/minio/file"
+	accountPostgresRepository "server/internal/app/adapters/secondary/repositories/postgrtes/account"
+	bankCardPostgresRepository "server/internal/app/adapters/secondary/repositories/postgrtes/bank_card"
+	filePostgresRepository "server/internal/app/adapters/secondary/repositories/postgrtes/file"
+	textPostgresRepository "server/internal/app/adapters/secondary/repositories/postgrtes/text"
 	userPostgresReporitory "server/internal/app/adapters/secondary/repositories/postgrtes/user"
-	accountUsecase "server/internal/app/usecases/account_obj"
-	bankCardUsecase "server/internal/app/usecases/bank_card_obj"
-	fileUsecase "server/internal/app/usecases/file_obj"
-	textUsecase "server/internal/app/usecases/text_obj"
+	accountUsecase "server/internal/app/usecases/account"
+	bankCardUsecase "server/internal/app/usecases/bank_card"
+	fileUsecase "server/internal/app/usecases/file"
+	textUsecase "server/internal/app/usecases/text"
 	userUsecase "server/internal/app/usecases/user"
 	"server/internal/pkg/graceful"
 	"server/internal/pkg/minio"
@@ -47,11 +47,11 @@ func New() (*App, error) {
 
 	// http
 	httpAdapter := http_adapter.New(&http_adapter.Srv{
-		UserUseCase:        userUsecase.New(userPostgresReporitory.New(p.DB)),
-		AccountObjUseCase:  accountUsecase.New(accountPostgresRepository.New(p.DB)),
-		BankCardObjUseCase: bankCardUsecase.New(bankCardPostgresRepository.New(p.DB)),
-		TextObjUseCase:     textUsecase.New(textPostgresRepository.New(p.DB)),
-		FileObjUseCase:     fileUsecase.New(filePostgresRepository.New(p.DB), fileMinioRepository.New(m.CL)),
+		UserUseCase:     userUsecase.New(userPostgresReporitory.New(p.DB)),
+		AccountUseCase:  accountUsecase.New(accountPostgresRepository.New(p.DB)),
+		BankCardUseCase: bankCardUsecase.New(bankCardPostgresRepository.New(p.DB)),
+		TextUseCase:     textUsecase.New(textPostgresRepository.New(p.DB)),
+		FileUseCase:     fileUsecase.New(filePostgresRepository.New(p.DB), fileMinioRepository.New(m.CL)),
 	})
 
 	return &App{

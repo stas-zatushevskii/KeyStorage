@@ -2,38 +2,38 @@ package http_adapter
 
 import (
 	"context"
-	account_router "server/internal/app/adapters/primary/http-adapter/handlers/account_obj"
-	bankCard_router "server/internal/app/adapters/primary/http-adapter/handlers/bank_card_obj"
-	file_router "server/internal/app/adapters/primary/http-adapter/handlers/file_obj"
-	text_router "server/internal/app/adapters/primary/http-adapter/handlers/text_obj"
-	user_router "server/internal/app/adapters/primary/http-adapter/handlers/user"
+	accountrouter "server/internal/app/adapters/primary/http-adapter/handlers/account"
+	bankCardrouter "server/internal/app/adapters/primary/http-adapter/handlers/bank_card"
+	filerouter "server/internal/app/adapters/primary/http-adapter/handlers/file"
+	textrouter "server/internal/app/adapters/primary/http-adapter/handlers/text"
+	userrouter "server/internal/app/adapters/primary/http-adapter/handlers/user"
 	"server/internal/app/adapters/primary/http-adapter/middlewares"
-	account "server/internal/app/usecases/account_obj"
-	bankCard "server/internal/app/usecases/bank_card_obj"
-	file "server/internal/app/usecases/file_obj"
-	text "server/internal/app/usecases/text_obj"
+	account "server/internal/app/usecases/account"
+	bankCard "server/internal/app/usecases/bank_card"
+	file "server/internal/app/usecases/file"
+	text "server/internal/app/usecases/text"
 	"server/internal/app/usecases/user"
-	http_server "server/internal/pkg/http-server"
+	httpserver "server/internal/pkg/http-server"
 
 	"github.com/go-chi/chi/v5"
 )
 
 type HttpAdapter struct {
-	server *http_server.Server
+	server *httpserver.Server
 }
 
 type Srv struct {
-	UserUseCase        *user.User
-	AccountObjUseCase  *account.AccountObj
-	BankCardObjUseCase *bankCard.BankCardObj
-	TextObjUseCase     *text.TextObj
-	FileObjUseCase     *file.FileObj
+	UserUseCase     *user.User
+	AccountUseCase  *account.Account
+	BankCardUseCase *bankCard.BankCard
+	TextUseCase     *text.Text
+	FileUseCase     *file.File
 }
 
 func New(svc *Srv) *HttpAdapter {
 	router := newRouter(svc)
 
-	s := http_server.New(router)
+	s := httpserver.New(router)
 
 	return &HttpAdapter{
 		server: s,
@@ -42,19 +42,19 @@ func New(svc *Srv) *HttpAdapter {
 
 func newRouter(srv *Srv) *chi.Mux {
 	// user router
-	userRouter := user_router.New(srv.UserUseCase)
+	userRouter := userrouter.New(srv.UserUseCase)
 
 	// account router
-	accountRouter := account_router.New(srv.AccountObjUseCase)
+	accountRouter := accountrouter.New(srv.AccountUseCase)
 
 	// bank card router
-	bankCardRouter := bankCard_router.New(srv.BankCardObjUseCase)
+	bankCardRouter := bankCardrouter.New(srv.BankCardUseCase)
 
 	// text handler
-	textRouter := text_router.New(srv.TextObjUseCase)
+	textRouter := textrouter.New(srv.TextUseCase)
 
 	// file handler
-	fileRouter := file_router.New(srv.FileObjUseCase)
+	fileRouter := filerouter.New(srv.FileUseCase)
 
 	// create router
 	r := chi.NewRouter()
@@ -62,7 +62,7 @@ func newRouter(srv *Srv) *chi.Mux {
 	// mount user router
 	r.Mount("/user", userRouter.Routes(srv.UserUseCase))
 
-	// mount account object router with jwt authentification middleware
+	// mount account ect router with jwt authentification middleware
 	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/account", accountRouter.Routes())
 	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/card", bankCardRouter.Routes())
 	r.With(middlewares.JWTMiddleware(srv.UserUseCase)).Mount("/text", textRouter.Routes())

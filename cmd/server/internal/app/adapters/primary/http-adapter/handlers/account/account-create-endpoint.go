@@ -1,0 +1,69 @@
+package account
+
+import (
+	"encoding/json"
+	"net/http"
+	"server/internal/app/adapters/primary/http-adapter/codec"
+	"server/internal/app/adapters/primary/http-adapter/constants"
+	errorMapper "server/internal/app/adapters/primary/http-adapter/error-mapper/account_usecase"
+	domain "server/internal/app/domain/account"
+	"server/internal/pkg/logger"
+
+	"go.uber.org/zap"
+)
+
+type CreateAccountRequest struct {
+	ServiceName string `json:"service_name"`
+	UserName    string `json:"user_name"`
+	Password    string `json:"password"`
+}
+
+type CreateAccountResponse struct {
+	AccountID int64 `json:"account_id"`
+}
+
+func (h *HttpHandler) CreateAccount(w http.ResponseWriter, r *http.Request) {
+	const HandlerName = "CreateAccount"
+
+	var (
+		req  = new(CreateAccountRequest)
+		resp = new(CreateAccountResponse)
+	)
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "json decode error")
+		return
+	}
+
+	userID, ok := r.Context().Value(constants.UserIDKey).(int64)
+	if !ok {
+		codec.WriteErrorJSON(w, http.StatusUnprocessableEntity, "user ID not found in context")
+		return
+	}
+
+	account := req.toDomain()
+	account.UserId = userID
+
+	id, err := h.service.CreateNewAccount(r.Context(), account)
+
+	if err != nil {
+		logger.Log.Error(HandlerName, zap.Error(err))
+
+		s, m := errorMapper.Process(err)
+		codec.WriteErrorJSON(w, s, m)
+		return
+	}
+
+	resp.AccountID = id
+
+	codec.WriteJSON(w, http.StatusOK, resp)
+	return
+}
+
+func (req CreateAccountRequest) toDomain() *domain.Account {
+	return &domain.Account{
+		ServiceName: req.ServiceName,
+		UserName:    req.UserName,
+		Password:    req.Password}
+}
