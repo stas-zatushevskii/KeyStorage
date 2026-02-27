@@ -1,0 +1,44 @@
+package bank_card;
+
+message CreateBankCardRequest {
+  required string BankName = 1;
+  required string PID = 2;
+}
+
+message CreateBankCardResponse {
+  required int64 CardID = 1;
+}
+
+message BankCardRequest {}
+
+message BankCardResponse {
+  required string BankName = 1;
+  required string PID = 2;
+}
+
+message bankCard {
+  required int64 CardID = 1;
+  required string BankName = 2;
+}
+
+message BankCardListRequest{}
+
+message BankCardListResponse{
+  repeated bankCard BankCard = 1;
+}
+
+message UpdateBankCardRequest {
+  required string PID = 1;
+  required string BankName = 2;
+}
+
+message UpdateBankCardResponse {
+  optional string InfoMessage = 1;
+}
+
+service BankCardService {
+  rpc CreateNewBankCard(CreateBankCardRequest) returns (CreateBankCardResponse);
+  rpc GetBankCard(BankCardRequest) returns (BankCardResponse);
+  rpc GetBankCardList(BankCardListRequest) returns (BankCardListResponse);
+  rpc UpdateBankCard(UpdateBankCardRequest) returns (UpdateBankCardResponse);
+}

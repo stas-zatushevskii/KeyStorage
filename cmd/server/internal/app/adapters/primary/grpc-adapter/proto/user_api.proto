@@ -1,0 +1,28 @@
+package user;
+
+message UserData {
+  required string Username = 1;
+  required string Password = 2;
+}
+
+message RegisterNewUserRequestResponse {
+  required string Token = 1;
+  required string RefreshToken = 2;
+}
+
+message LoginResponse {
+  required string Token = 1;
+  required string RefreshToken = 2;
+  optional string Error = 3;
+}
+
+message RefreshTokenResponse {
+  required string Token = 1;
+  required string RefreshToken = 2;
+}
+
+service UserService {
+  rpc RegisterNewUser(UserData) returns (RegisterNewUserRequestResponse);
+  rpc Login(UserData) returns (LoginResponse);
+  rpc RefreshJWTToken(UserData) returns (RefreshTokenResponse);
+}

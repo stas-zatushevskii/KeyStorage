@@ -1,0 +1,49 @@
+package account;
+
+message CreateAccountRequest {
+  required string ServiceName = 1;
+  required string UserName = 2;
+  required string Password = 3;
+}
+
+message CreateAccountResponse {
+  required int64 AccountID = 1;
+}
+
+message GetAccountRequest{}
+
+message GetAccountResponse{
+  required string ServiceName = 1;
+  required string Username = 2;
+  required string Password = 3;
+}
+
+message GetAccountListRequest{}
+
+message account {
+  required int64 AccountID = 1;
+  required string ServiceName = 2;
+  required string Username = 3;
+}
+
+message AccountListResponse {
+  repeated account AccountList = 1;
+}
+
+message UpdateAccountRequest {
+  required string ServiceName = 1;
+  required string UserName = 2;
+  required string Password = 3;
+  required int64 AccountID = 4;
+}
+
+message UpdateAccountResponse {
+  optional string InfoMessage = 1;
+}
+
+service AccountService {
+  rpc CreateNewAccount(CreateAccountRequest) returns (CreateAccountResponse);
+  rpc GetAccount(GetAccountRequest) returns (GetAccountResponse);
+  rpc GetAccountsList(GetAccountListRequest) returns (AccountListResponse);
+  rpc UpdateAccount(UpdateAccountRequest) returns (UpdateAccountResponse);
+}

@@ -1,0 +1,43 @@
+package text;
+
+message CreateTextRequest {
+  required string Title = 1;
+  required string Text = 2;
+}
+
+message CreateTextResponse {
+  required int64 TextID = 1;
+}
+
+message TextRequest{}
+
+message TextResponse {
+  required string Title = 1;
+  required string Text = 2;
+}
+
+message text {
+  required int64 TextID = 1;
+  required string Title = 2;
+}
+
+message TextListRequest {}
+
+message TextListResponse {
+  repeated text Text = 1;
+}
+
+message UpdateTextRequest {
+  required string Title = 1;
+  required string Text = 2;
+}
+
+message UpdateTextResponse {
+  optional string InfoMessage = 1;
+}
+
+service TextService {
+  rpc CreateNewText(CreateTextRequest) returns (CreateTextResponse);
+  rpc GetText(TextRequest) returns (TextResponse);
+  rpc GetTextList(TextListResponse) returns (TextListResponse);
+}
